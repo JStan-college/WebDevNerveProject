@@ -1,14 +1,19 @@
 // backend/index.js
-const express = require('express');
-const mongoose = require('mongoose');
-const cors = require('cors');
+import express from "express";
+import mongoose from "mongoose";
+import cors from "cors";
+import postsRoutes from './routes/postsRoutes.js';
 
-require('dotenv').config();
+import dotenv from 'dotenv';
+dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 8080;
 
 app.use(express.json());
+
+app.use('/api/posts', postsRoutes);
+
 app.use(cors({
   origin: 'http://localhost:3000', //connect to frontend, react dev server
 }));
