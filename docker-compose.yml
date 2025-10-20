@@ -1,0 +1,18 @@
+services:
+  backend:
+    build: ./backend
+    container_name: backend
+    restart: always
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env
+
+  frontend:
+    build: ./frontend/nerve_app
+    container_name: frontend
+    restart: always
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
