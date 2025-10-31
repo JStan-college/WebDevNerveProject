@@ -1,6 +1,8 @@
+import "./Pages.css";
+
 const HomePage = () => {
   return (
-    <div>
+    <div className="content">
       <h1>Home Page</h1>
     </div>
   );
