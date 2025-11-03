@@ -1,0 +1,81 @@
+@import "../../style.scss";
+
+
+.rightbar{
+    @include themify($themes){
+    flex: 3;
+    position: sticky;
+    top: 70px;
+    height: calc(100vh - 70px);
+    overflow: scroll;
+    background-color: themed("bgSoft");
+
+    &::-webkit-scrollbar {
+        display: none;
+    }
+    .container{
+        padding: 20px;
+
+        .item{
+
+            box-shadow: 0px 3px 6px 1px rgba(0,0,0,0.29);
+            -webkit-box-shadow: 0px 3px 6px 1px rgba(0,0,0,0.29);
+            -moz-box-shadow: 0px 3px 6px 1px rgba(0,0,0,0.29);
+            padding: 20px;
+            margin-bottom: 20px;
+            background-color: themed("background-color");
+
+            span{
+                color: grey;
+            }
+
+            .user{
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                margin: 20px 0;
+                .userinfo{
+                    display: flex;
+                    align-items: center;
+
+                    img{
+                        width: 40px;
+                        height: 40px;
+                        border-radius: 50%;
+                        object-fit: cover;
+                    }
+
+                    p{
+                        color: themed("textColorSoft");
+                    }
+
+                    span{
+                        font-weight: 500;
+                        color: themed("text-color");
+                    }
+                }
+                .buttons{
+                    display: flex;
+                    align-items: center;
+                    gap: 10px;
+
+                    button{
+                        border: none;
+                        padding: 5px;
+                        color: white;
+                        cursor: pointer;
+
+                        &:first-child{
+                            background-color: #1872f2;
+                        }
+                        &:last-child{
+                            background-color: red;
+                        }
+                    }
+
+                }
+            }
+        }
+    }
+}
+}

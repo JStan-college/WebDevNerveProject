@@ -6,16 +6,23 @@ import RightBar from "./components/rightbar/RightBar";
 import NavBar from "./components/navbar/NavBar";
 import Home from "./pages/home/Home";
 import Profile from "./pages/profile/Profile";
+import "./style.scss";
+import { DarkModeContext } from "./context/darkModeContext";
+import { useContext} from 'react';
 
 
 function App() {
 
+  const {darkMode} = useContext(DarkModeContext)
+
   const Layout = ()=>{
-    return (<div>
+    return (<div className={`theme-${darkMode ? "dark" : "light"}`}>
       <NavBar />
       <div style={{ display: "flex" }}>
         <LeftBar />
-        <Outlet />
+        <div style={{flex: 6}}>
+          <Outlet />
+        </div>
         <RightBar />  
       </div>
     </div>
