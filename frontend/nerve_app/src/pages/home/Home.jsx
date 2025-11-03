@@ -1,41 +1,12 @@
 import "./Home.scss";
+import Stories from "../../components/stories/Stories";
+import Posts from "../../components/posts/Posts";
 
 const Home = () => {
   return (
     <div className="home">
-      <h1>Welcome to Nerve</h1>
-      <h1>Welcome to Nerve</h1>
-      <h1>Welcome to Nerve</h1>
-      <h1>Welcome to Nerve</h1>
-      <h1>Welcome to Nerve</h1>
-      <h1>Welcome to Nerve</h1>
-      <h1>Welcome to Nerve</h1>
-      <h1>Welcome to Nerve</h1>
-      <h1>Welcome to Nerve</h1>
-      <h1>Welcome to Nerve</h1>
-      <h1>Welcome to Nerve</h1>
-      <h1>Welcome to Nerve</h1>
-      <h1>Welcome to Nerve</h1>
-      <h1>Welcome to Nerve</h1>
-      <h1>Welcome to Nerve</h1>
-      <h1>Welcome to Nerve</h1>
-      <h1>Welcome to Nerve</h1>
-      <h1>Welcome to Nerve</h1>
-      <h1>Welcome to Nerve</h1>
-      <h1>Welcome to Nerve</h1>
-      <h1>Welcome to Nerve</h1>
-      <h1>Welcome to Nerve</h1>
-      <h1>Welcome to Nerve</h1>
-      <h1>Welcome to Nerve</h1>
-      <h1>Welcome to Nerve</h1>
-      <h1>Welcome to Nerve</h1>
-      <h1>Welcome to Nerve</h1>
-      <h1>Welcome to Nerve</h1>
-      <h1>Welcome to Nerve</h1>
-      <h1>Welcome to Nerve</h1>
-      <h1>Welcome to Nerve</h1>
-      <h1>Welcome to Nerve</h1>
-      <h1>Welcome to Nerve</h1>
+      <Stories/>
+      <Posts />
     </div>
   );
 }
