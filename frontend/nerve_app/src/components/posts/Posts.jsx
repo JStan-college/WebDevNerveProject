@@ -1,10 +1,12 @@
 import "./posts.scss";
 import Post from "../post/Post";
-
+import { useState, useEffect } from "react";
 
 const Posts = () => {
+    const [posts, setPosts] = useState([]);
 
     //temp data
+    /*
     const posts = [
         {
             id: 1,
@@ -23,10 +25,31 @@ const Posts = () => {
         },
         
     ];
+    */
+
+    useEffect(() => {
+        const getPosts = async () => {
+            const url = "http://localhost:8080/api/posts";
+            try {
+                const response = await fetch(url, {
+                    method: "GET",
+                });
+                const result = await response.json();
+                console.log(result);
+                setPosts(result)
+            } catch (error) {
+                console.error("error fetching posts");
+            }
+        };
+
+        getPosts();
+    }, []);
+
+    //console.log(posts);
 
     return <div className="posts">
         {posts.map(post=>(
-            <Post post={post} key={post.id}/>
+            <Post post={post} key={post._id}/>
         ))}
     </div>;
 

@@ -1,8 +1,12 @@
 import "./comments.scss";
+import {useState, useEffect} from 'react';
+
 
 const Comments = () => {
-
+    const [comments, setComments] = useState([]);
+    
     //Temporary
+    /*
     const comments = [
         {
         id: 1,
@@ -21,21 +25,40 @@ const Comments = () => {
             "https://images.pexels.com/photos/1036623/pexels-photo-1036623.jpeg?auto=compress&cs=tinysrgb&w=1600",
         },
     ];
+    */
+
+    useEffect(() => {
+            const getComments = async () => {
+                const url = "http://localhost:8080/api/comments";
+                try {
+                    const response = await fetch(url, {
+                        method: "GET",
+                    });
+                    const result = await response.json();
+                    console.log(result);
+                    setComments(result)
+                } catch (error) {
+                    console.error("error fetching posts");
+                }
+            };
+    
+            getComments();
+        }, []);
 
     return (
         <div className="comments">
             <div className="write">
                 {/*Profile picture on comments needs to be fixed when user authentication is done */}
-                <img src={comments.profilePicture} alt="" />
+                {/*<img src={comments.profilePicture} alt="" />*/}
                 <input type="text" placeholder="write a comment" />
                 <button>Send</button>
             </div>
-            {comments.map((comment) => (
+            {comments?.map(comment=>(
                 <div className="comment">
                 <img src={comment.profilePicture} alt="" />
                 <div className="info">
-                    <span>{comment.name}</span>
-                    <p>{comment.desc}</p>
+                    {/*<span>{comment.user_id}</span>*/}
+                    <p>{comment.content}</p>
                 </div>
                 <span className="date">1 hour ago</span>
                 </div>

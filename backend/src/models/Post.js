@@ -4,9 +4,10 @@ import { Schema } from "mongoose";
 const PostSchema = new Schema({
     title: { type: String, required: true },
     content: { type: String, required: true },
-    userId: { type: String, required: true },
+    user_id: { type: String, required: true },
     challengeId: { type: String, required: true },
-    score: { type: Number, default: 0 }
+    score: { type: Number, default: 0 },
+    imageurl: {type: String}
 }, { timestamps: true }
 );
 

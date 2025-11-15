@@ -20,10 +20,8 @@ const Post = ({post}) => {
             <div className="container">
                 <div className="user">
                     <div className="userInfo">
-                        <img src={post.profilePic} alt="" />
                         <div className="details">
-                            <Link to={`/profile/${post.userId}`} style={{textDecoration:"none", color:"inherit"}}>
-                            <span className="name">{post.name}</span>
+                            <Link to={`/profile/${post.user_id}`} style={{textDecoration:"none", color:"inherit"}}>
                             </Link>
                             <span className="date"> 1 min ago</span>
                         </div>
@@ -31,13 +29,14 @@ const Post = ({post}) => {
                     <MoreHorizIcon/>
                 </div>
                 <div className="content">
-                    <p>{post.desc}</p>
-                    <img src={post.img} alt="" />
+                    <h1>{post.title}</h1>
+                    <p>{post.content}</p>
+                    <img src={post.imgurl} alt="" />
                 </div>
                 <div className="info">
                     <div className="item">
                         {liked ? <FavoriteOutlinedIcon/> : <FavoriteBorderOutlinedIcon/>}
-                        12 Likes
+                        {post.score} Likes
                     </div>
                     <div className="item" onClick={()=>setCommentOpen(!commentOpen)}>
                         <TextsmsOutlinedIcon/>
