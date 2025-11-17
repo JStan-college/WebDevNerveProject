@@ -2,6 +2,8 @@ import "./navBar.scss";
 import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
 import DarkModeOutlinedIcon from '@mui/icons-material/DarkModeOutlined';
 import GridViewOutlinedIcon from '@mui/icons-material/GridViewOutlined';
+import AddBoxOutlinedIcon from '@mui/icons-material/AddBoxOutlined';
+import { useNavigate } from "react-router-dom";
 import WbSunnyOutlinedIcon from '@mui/icons-material/WbSunnyOutlined';
 import NotificationsOutlinedIcon from '@mui/icons-material/NotificationsOutlined';
 import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
@@ -15,6 +17,12 @@ const NavBar = () => {
 
   const {toggle, darkMode} = useContext(DarkModeContext);
 
+  let navigate = useNavigate();
+  const createPage = () => {
+    let path = `/create`;
+    navigate(path);
+  }
+
   return (
     <div className="navbar">
       <div className="left">
@@ -23,7 +31,8 @@ const NavBar = () => {
         </Link>
         <HomeOutlinedIcon/>
         {darkMode ? <WbSunnyOutlinedIcon onClick={toggle}/> : <DarkModeOutlinedIcon onClick={toggle}/>}
-        <GridViewOutlinedIcon/>
+        {/*<GridViewOutlinedIcon/>*/}
+        <AddBoxOutlinedIcon onClick={createPage}/>
         <div className="search">
           <SearchOutlinedIcon/>
           <input type="text" placeholder="Search..." />

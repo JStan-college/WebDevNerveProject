@@ -1,0 +1,38 @@
+.create {
+height: 100vh;
+background-color: rgb(193, 190, 255);
+overflow: hidden;
+display: flex;
+align-items: center;
+justify-content: center;
+    .card {
+    width: 50%;
+    border-radius: 10px;
+    background-color: white;
+    display: flex;
+    min-height: 600px;
+    overflow: hidden;
+        h1{
+        color: #555;
+        }
+        form{
+        display: flex;
+        flex-direction: column;
+        gap: 30px;
+            input{
+                border: none;
+                border-bottom: 1px solid lightgray;
+                padding: 20px 10px;
+            }
+            button{
+                width: 50%;
+                padding: 10px;
+                border: none;
+                background-color: #938eef;
+                color: white;
+                font-weight: bold;
+                cursor: pointer;
+            }
+        }
+    }
+}
