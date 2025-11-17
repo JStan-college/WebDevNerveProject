@@ -45,11 +45,15 @@ const Posts = () => {
         getPosts();
     }, []);
 
+    const handlePostDeleted = (id) => {
+        setPosts(prev => prev.filter(p => p._id !== id));
+    };
+
     //console.log(posts);
 
     return <div className="posts">
         {posts.map(post=>(
-            <Post post={post} key={post._id}/>
+            <Post post={post} key={post._id} onPostDeleted={handlePostDeleted}/>
         ))}
     </div>;
 

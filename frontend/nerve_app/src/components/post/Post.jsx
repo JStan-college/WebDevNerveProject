@@ -7,13 +7,18 @@ import ShareOutlinedIcon from "@mui/icons-material/ShareOutlined";
 import { Link } from "react-router-dom";
 import Comments from "../comments/Comments";
 import {useState} from 'react';
+import PostOptions from "../postoptions/PostOptions";
 
-const Post = ({post}) => {
+const Post = ({post, onPostDeleted}) => {
 
     const [commentOpen, setCommentOpen] = useState(false);
 
+    const [optionsOpen, setOptionsOpen] = useState(false);
+
     //needs to be fixed
     const liked = false;
+
+    
 
     return (
         <div className="post">
@@ -26,7 +31,11 @@ const Post = ({post}) => {
                             <span className="date"> 1 min ago</span>
                         </div>
                     </div>
-                    <MoreHorizIcon/>
+                    <div className="item" onClick={() => setOptionsOpen(!optionsOpen)}>
+                        <MoreHorizIcon/>
+                        {optionsOpen && <PostOptions postId={post._id} onDeleted={onPostDeleted}/>}
+                    </div>
+                    
                 </div>
                 <div className="content">
                     <h1>{post.title}</h1>
