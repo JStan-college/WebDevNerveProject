@@ -13,7 +13,7 @@ export async function getAllPosts(_, res) {
 export async function createPost(req, res) {
     try {
         const { title, content, userId, challengeId } = req.body;
-        const newPost = new Post({ title, content, userId, challengeId });
+        const newPost = new Post({ title, content, user_id: userId, challengeId });
 
         const savedPost = await newPost.save();
         res.status(201).json({ message: "Post created successfully", post: savedPost });

@@ -1,6 +1,7 @@
 import "./Create.scss";
 import { useState } from "react";
 
+
 const Create = () => {
     const [title, setTitle] = useState("");
     const [content, setContent] = useState("");
@@ -9,7 +10,30 @@ const Create = () => {
         e.preventDefault();
         console.log(title);
         console.log(content);
+        //placeholder id until challenge id and user id is implemented
+        const tempUserid = "123abc";
+        const tempChallengeid = "125abc";
+
+        const newPost = {title, content, userId: tempUserid, challengeId: tempChallengeid};
+
+        try {
+            const response = await fetch("http://localhost:8080/api/posts", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(newPost),
+            });
+
+            const result = await response.json();
+            console.log("Post created", result);
+
+            setTitle("");
+            setContent("");
+        } catch (error) {
+            console.error("Error creating post:", error);
+        }
     };
+
+    
 
     return (
         <div className="create">
