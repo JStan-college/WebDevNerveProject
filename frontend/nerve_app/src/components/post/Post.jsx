@@ -38,9 +38,11 @@ const Post = ({post, onPostDeleted}) => {
                     
                 </div>
                 <div className="content">
+                    <Link to={`/post/${post._id}`} style={{textDecoration:"none", color:"inherit"}}>
                     <h1>{post.title}</h1>
                     <p>{post.content}</p>
                     <img src={post.imgurl} alt="" />
+                    </Link>
                 </div>
                 <div className="info">
                     <div className="item">

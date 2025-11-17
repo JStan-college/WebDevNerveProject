@@ -7,6 +7,7 @@ import RightBar from "./components/rightbar/RightBar";
 import NavBar from "./components/navbar/NavBar";
 import Home from "./pages/home/Home";
 import Profile from "./pages/profile/Profile";
+import PostDetails from "./pages/post/PostDetails";
 import "./style.scss";
 import { DarkModeContext } from "./context/darkModeContext";
 import { useContext} from 'react';
@@ -42,6 +43,11 @@ function App() {
         {
           path: "/profile/:id",
           element: <Profile />,
+        }
+        ,
+        {
+          path: "/post/:id",
+          element: <PostDetails />
         }
       ],
     },
