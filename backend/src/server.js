@@ -13,7 +13,7 @@ const app = express();
 const PORT = process.env.PORT || 8080;
 
 app.use(cors({
-  origin: 'http://localhost:3000', //connect to frontend, react dev server
+  origin: 'http://localhost:5173', //connect to frontend, react dev server
 }));
 app.use(express.json());
 
