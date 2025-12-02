@@ -5,11 +5,14 @@ import { useNavigate } from 'react-router-dom';
 
 const PostOptions = ({postId, onDeleted}) => {
     const navigate = useNavigate();
+
     
     const handleDelete = async () => {
+        const token = localStorage.getItem("token");
         try {
             const response = await fetch(`http://localhost:8080/api/posts/${postId}`, {
                 method: "DELETE",
+                headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
             });
 
             const result = await response.json();

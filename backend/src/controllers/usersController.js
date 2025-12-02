@@ -1,4 +1,6 @@
 import User from '../models/User.js';
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
 
 export async function getAllUsers(_, res) {
     try {
@@ -23,7 +25,7 @@ export async function createUser(req, res) {
     }
 }
 
-//
+
 export async function updateUser(req, res) {
     try {
         const {username, challengesCompleted, challengesGiven, reputation, imageurl} = req.body;
@@ -58,4 +60,35 @@ export async function getUserById(req, res) {
     } catch (err) {
         res.status(500).json({ message: err.message });
     }
+}
+
+export async function loginUser(req, res) {
+  try {
+    const { username, password } = req.body;
+
+    const user = await User.findOne({ username });
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    const validPassword = await bcrypt.compare(password, user.password);
+    if (!validPassword)
+      return res.status(401).json({ message: "Invalid password" });
+
+    const token = jwt.sign(
+      { id: user._id },
+      process.env.JWT_SECRET,
+      { expiresIn: "1h" }
+    );
+
+    res.status(200).json({
+      message: "Login successful",
+      token,
+      user: {
+        id: user._id,
+        username: user.username,
+        email: user.email,
+      },
+    });
+  } catch (err) {
+    res.status(500).json({ message: "Server error" });
+  }
 }
