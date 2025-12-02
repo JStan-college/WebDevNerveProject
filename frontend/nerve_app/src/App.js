@@ -8,6 +8,7 @@ import NavBar from "./components/navbar/NavBar";
 import Home from "./pages/home/Home";
 import Profile from "./pages/profile/Profile";
 import PostDetails from "./pages/post/PostDetails";
+import ProtectedRoute from "./components/ProtectedRoute";
 import "./style.scss";
 import { DarkModeContext } from "./context/darkModeContext";
 import { useContext} from 'react';
@@ -61,7 +62,7 @@ function App() {
     },
     {
       path: "/create",
-      element: <Create />
+      element: <ProtectedRoute element={<Create />} />
     }
   ]);
 

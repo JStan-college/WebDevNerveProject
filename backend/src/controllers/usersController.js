@@ -92,3 +92,13 @@ export async function loginUser(req, res) {
     res.status(500).json({ message: "Server error" });
   }
 }
+
+export async function logoutUser(req, res) {
+  try {
+    // Since JWT is stateless, logout is handled client-side by removing the token
+    // This endpoint can be used for logging/tracking purposes or clearing server-side sessions
+    res.status(200).json({ message: "Logout successful" });
+  } catch (err) {
+    res.status(500).json({ message: "Server error" });
+  }
+}
