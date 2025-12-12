@@ -11,8 +11,9 @@ const PostDetails = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [isEditing, setIsEditing] = useState(false);
-    const [title, setTitle] = useState('');
-    const [content, setContent] = useState('');
+    const [user, setUser] = useState(null);
+    const [title, setTitle] = useState("");
+    const [content, setContent] = useState("");
 
     useEffect(() => {
         if (!id) return;
@@ -22,16 +23,37 @@ const PostDetails = () => {
                 if (!res.ok) throw new Error('Failed to fetch');
                 const data = await res.json();
                 setPost(data);
-                setTitle(data.title || '');
-                setContent(data.content || '');
+                setTitle(data.title);
+                setContent(data.content);
+                console.log("Post user_id:", data.user_id);
             } catch (err) {
                 setError(err.message || 'Error');
             } finally {
-                setLoading(false);
+                //setLoading(false);
+                console.log("Fetched post details");
             }
         };
         fetchPostDetails();
     }, [id]);
+
+    //get the user info based on the post's user_id for displaying username
+    useEffect(() => {
+        if (!post) return;
+        const fetchUser = async () => {
+            try {
+                const res = await fetch(`http://localhost:8080/api/users/${post.user_id}`);
+                if (!res.ok) throw new Error('Failed to fetch user');
+                const data = await res.json();
+                setUser(data);
+            } catch (err) {
+                console.error("Error fetching user:", err);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchUser();
+        console.log("Fetched user for post:", post.user_id);
+    }, [post]);
 
     const handleSave = async () => {
         const token = localStorage.getItem("token");
@@ -60,7 +82,7 @@ const PostDetails = () => {
             {!isEditing ? (
                 <>
                     <h1>{post.title}</h1>
-                    <div className="meta">By {post.username || post.author || 'Unknown'}</div>
+                    <div className="meta">By {user?.username || post.user_id || 'Unknown'}</div>
                     {post.imgurl && <img src={post.imgurl} alt="post" style={{maxWidth: '100%'}}/>}
                     <p>{post.content}</p>
                     <div style={{marginTop: 12}}>

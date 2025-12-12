@@ -9,7 +9,7 @@ import Comments from "../comments/Comments";
 import {useState} from 'react';
 import PostOptions from "../postoptions/PostOptions";
 
-const Post = ({post, onPostDeleted}) => {
+const PostCard = ({post, onPostDeleted}) => {
 
     const [commentOpen, setCommentOpen] = useState(false);
 
@@ -65,4 +65,4 @@ const Post = ({post, onPostDeleted}) => {
     )
 }
 
-export default Post;
+export default PostCard;

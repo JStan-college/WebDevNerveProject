@@ -1,5 +1,5 @@
 import "./posts.scss";
-import Post from "../post/Post";
+import PostCard from "../post/PostCard";
 import { useState, useEffect } from "react";
 
 const Posts = () => {
@@ -53,7 +53,7 @@ const Posts = () => {
 
     return <div className="posts">
         {posts.map(post=>(
-            <Post post={post} key={post._id} onPostDeleted={handlePostDeleted}/>
+            <PostCard post={post} key={post._id} onPostDeleted={handlePostDeleted}/>
         ))}
     </div>;
 

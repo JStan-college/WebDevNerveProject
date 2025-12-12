@@ -5,7 +5,7 @@ import Posts from "../../components/posts/Posts";
 const Home = () => {
   return (
     <div className="home">
-      <Stories/>
+      {/*<Stories/>*/}
       <Posts />
     </div>
   );
