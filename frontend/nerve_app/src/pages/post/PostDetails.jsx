@@ -1,6 +1,7 @@
 import React from 'react';
 import "../../components/postoptions/postOptions.scss";
 import {useState, useEffect} from 'react';
+import { timeAgoOrDate } from '../../utils/date';
 import { useParams, useNavigate } from 'react-router-dom';
 
 const PostDetails = () => {
@@ -82,7 +83,7 @@ const PostDetails = () => {
             {!isEditing ? (
                 <>
                     <h1>{post.title}</h1>
-                    <div className="meta">By {user?.username || post.user_id || 'Unknown'}</div>
+                    <div className="meta">By {user?.username || post.user_id || 'Unknown'} • <span className="date">{timeAgoOrDate(post.createdAt)}</span></div>
                     {post.imgurl && <img src={post.imgurl} alt="post" style={{maxWidth: '100%'}}/>}
                     <p>{post.content}</p>
                     <div style={{marginTop: 12}}>

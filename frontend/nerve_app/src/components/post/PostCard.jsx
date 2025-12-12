@@ -5,6 +5,7 @@ import FavoriteOutlinedIcon from "@mui/icons-material/FavoriteOutlined";
 import TextsmsOutlinedIcon from "@mui/icons-material/TextsmsOutlined";
 import ShareOutlinedIcon from "@mui/icons-material/ShareOutlined";
 import { Link } from "react-router-dom";
+import { timeAgoOrDate } from "../../utils/date";
 import Comments from "../comments/Comments";
 import {useState} from 'react';
 import PostOptions from "../postoptions/PostOptions";
@@ -28,7 +29,7 @@ const PostCard = ({post, onPostDeleted}) => {
                         <div className="details">
                             <Link to={`/profile/${post.user_id}`} style={{textDecoration:"none", color:"inherit"}}>
                             </Link>
-                            <span className="date"> 1 min ago</span>
+                            <span className="date">{timeAgoOrDate(post.createdAt)}</span>
                         </div>
                     </div>
                     <div className="item" onClick={() => setOptionsOpen(!optionsOpen)}>
