@@ -11,12 +11,16 @@ import PersonOutlinedIcon from '@mui/icons-material/PersonOutlined';
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
 import { Link } from "react-router-dom";
 import { DarkModeContext } from "../../context/darkModeContext";
-import { useContext, useState, useEffect } from 'react';
+import { useContext, useState, useEffect, useRef } from 'react';
 
 const NavBar = () => {
 
   const {toggle, darkMode} = useContext(DarkModeContext);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
+  const [showDropdown, setShowDropdown] = useState(false);
+  const debounceTimer = useRef(null);
 
   let navigate = useNavigate();
   
@@ -25,6 +29,47 @@ const NavBar = () => {
     const token = localStorage.getItem('token');
     setIsLoggedIn(!!token);
   }, []);
+
+  // Debounced search function
+  const searchableList = async (query) => {
+    if (!query.trim()) {
+      setSearchResults([]);
+      setShowDropdown(false);
+      return;
+    }
+
+    try {
+      const res = await fetch(`http://localhost:8080/api/posts/search?q=${encodeURIComponent(query)}`);
+      const posts = await res.json();
+      setSearchResults(Array.isArray(posts) ? posts : []);
+      setShowDropdown(true);
+    } catch (err) {
+      console.error('Search error:', err);
+      setSearchResults([]);
+    }
+  };
+
+  const handleSearchChange = (e) => {
+    const query = e.target.value;
+    setSearchQuery(query);
+
+    // Clear previous timer
+    if (debounceTimer.current) {
+      clearTimeout(debounceTimer.current);
+    }
+
+    // Set new timer for debounced search (500ms delay)
+    debounceTimer.current = setTimeout(() => {
+      searchableList(query);
+    }, 500);
+  };
+
+  const handleSelectPost = (postId) => {
+    navigate(`/post/${postId}`);
+    setSearchQuery("");
+    setSearchResults([]);
+    setShowDropdown(false);
+  };
 
   const createPage = () => {
     if (!isLoggedIn) {
@@ -64,7 +109,29 @@ const NavBar = () => {
         <AddBoxOutlinedIcon onClick={createPage}/>
         <div className="search">
           <SearchOutlinedIcon/>
-          <input type="text" placeholder="Search..." />
+          <input 
+            type="text" 
+            placeholder="Search..." 
+            value={searchQuery}
+            onChange={handleSearchChange}
+            onFocus={() => searchResults.length > 0 && setShowDropdown(true)}
+            onBlur={() => setTimeout(() => setShowDropdown(false), 200)}
+          />
+          {showDropdown && searchResults.length > 0 && (
+            <div className="search-dropdown">
+              {searchResults.map(post => (
+                <div
+                  key={post._id}
+                  onClick={() => handleSelectPost(post._id)}
+                >
+                  <strong>{post.title}</strong>
+                  <div>
+                    {post.content.substring(0, 50)}...
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
       </div>

@@ -58,3 +58,26 @@ export async function getPostById(req, res) {
         res.status(500).json({ message: err.message });
     }
 }
+
+export async function searchPosts(req, res) {
+    try {
+        const { q } = req.query;
+        
+        if (!q || q.trim() === "") {
+            return res.status(200).json([]);
+        }
+
+        // Use $regex with $options: "i" for case-insensitive pattern matching
+        const posts = await Post.find({
+            $or: [
+                { title: { $regex: q, $options: "i" } },
+                { content: { $regex: q, $options: "i" } }
+            ]
+        }).sort({ createdAt: -1 });
+
+        res.status(200).json(posts);
+    } catch (err) {
+        console.error("Search error:", err);
+        res.status(500).json({ message: "Server error" });
+    }
+}
