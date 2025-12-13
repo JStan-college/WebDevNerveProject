@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import "./Register.scss";
-import { useState } from "react";
+import { useState, useContext } from "react";
+import { DarkModeContext } from "../../context/darkModeContext";
 
 const Register = () => {
 
@@ -35,9 +36,12 @@ const Register = () => {
 
   }
 
+  const { darkMode } = useContext(DarkModeContext);
+
   return (
-    <div className="register">
-      <div className="card">
+    <div className={`theme-${darkMode ? "dark" : "light"}`}>
+      <div className="register">
+        <div className="card">
         <div className="left">
           <h1>Nerve</h1>
           <p>
@@ -59,6 +63,7 @@ const Register = () => {
             {/*<input type="text" placeholder="Name" />*/}
             <button type="submit">Register</button>
           </form>
+        </div>
         </div>
       </div>
     </div>
