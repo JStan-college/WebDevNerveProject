@@ -1,6 +1,7 @@
 import React from 'react';
-import "../../components/postoptions/postOptions.scss";
-import {useState, useEffect} from 'react';
+import "./PostDetails.scss";
+import {useState, useEffect, useContext} from 'react';
+import { DarkModeContext } from '../../context/darkModeContext';
 import { timeAgoOrDate } from '../../utils/date';
 import { useParams, useNavigate } from 'react-router-dom';
 
@@ -15,6 +16,7 @@ const PostDetails = () => {
     const [user, setUser] = useState(null);
     const [title, setTitle] = useState("");
     const [content, setContent] = useState("");
+    const { darkMode } = useContext(DarkModeContext);
 
     useEffect(() => {
         if (!id) return;
@@ -78,8 +80,10 @@ const PostDetails = () => {
     if (error) return <div className="postDetails">Error: {error}</div>;
     if (!post) return <div className="postDetails">No post found</div>;
 
-    return (
-        <div className="postDetails">
+        return (
+                <div className={`theme-${darkMode ? "dark" : "light"}`}>
+                    <div className="post-page">
+                        <div className="postDetails">
             {!isEditing ? (
                 <>
                     <h1>{post.title}</h1>
@@ -103,7 +107,9 @@ const PostDetails = () => {
                     </div>
                 </div>
             )}
-        </div>
+                        </div>
+                    </div>
+                </div>
     );
 };
 

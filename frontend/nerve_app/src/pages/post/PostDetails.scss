@@ -1,0 +1,91 @@
+@import "../../style.scss";
+
+.post-page {
+  @include themify($themes) {
+    background-color: themed("bgSoft");
+    padding: 20px 70px;
+    min-height: 100vh;
+    box-sizing: border-box;
+
+    @include mobile {
+      padding: 12px;
+    }
+
+    .postDetails {
+      max-width: 900px;
+      margin: 24px auto;
+      background-color: themed("background-color");
+      padding: 28px;
+      border-radius: 10px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+
+      h1 {
+        margin: 0 0 8px 0;
+        color: themed("text-color");
+        font-size: 28px;
+      }
+
+      .meta {
+        color: themed("textColorSoft");
+        font-size: 13px;
+        margin-bottom: 12px;
+      }
+
+      img {
+        width: 100%;
+        border-radius: 6px;
+        margin: 12px 0;
+        object-fit: cover;
+      }
+
+      p {
+        color: themed("text-color");
+        line-height: 1.6;
+        margin-bottom: 12px;
+      }
+
+      .edit-form {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+
+        label {
+          color: themed("textColorSoft");
+          font-size: 13px;
+        }
+
+        input, textarea {
+          border: 1px solid themed("border");
+          padding: 10px;
+          border-radius: 6px;
+          background-color: themed("bgSoft");
+          color: themed("text-color");
+        }
+
+        textarea { min-height: 180px; resize: vertical; }
+
+        button {
+          width: 120px;
+          padding: 8px 12px;
+          border-radius: 6px;
+          border: none;
+          background-color: themed("logo");
+          color: white;
+          cursor: pointer;
+        }
+
+        .cancel {
+          background-color: transparent;
+          color: themed("textColorSoft");
+          border: 1px solid themed("border");
+        }
+      }
+
+      @include mobile {
+        padding: 16px;
+        margin: 12px;
+      }
+    }
+  }
+}
+
