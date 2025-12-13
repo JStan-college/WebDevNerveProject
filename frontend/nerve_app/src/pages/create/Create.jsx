@@ -1,5 +1,6 @@
 import "./Create.scss";
-import { useState } from "react";
+import { useState, useContext } from "react";
+import { DarkModeContext } from "../../context/darkModeContext";
 
 
 const Create = () => {
@@ -36,8 +37,11 @@ const Create = () => {
 
     
 
+    const { darkMode } = useContext(DarkModeContext);
+
     return (
-        <div className="create">
+        <div className={`theme-${darkMode ? "dark" : "light"}`}>
+          <div className="create">
             <div className="card">
                 <h1>Create A New Post</h1>
                 <form onSubmit={handleSubmit}>
@@ -53,6 +57,7 @@ const Create = () => {
                     <button>Create Post</button>
                 </form>
             </div>
+          </div>
         </div>
     );
 }

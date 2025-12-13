@@ -1,78 +1,87 @@
+@import "../../style.scss";
+
 .register {
-height: 100vh;
-background-color: rgb(193, 190, 255);
-overflow: hidden;
-display: flex;
-align-items: center;
-justify-content: center;
-    .card {
-        width: 50%;
-        border-radius: 10px;
-        background-color: white;
+    @include themify($themes) {
+        background-color: themed("bgSoft");
+        padding: 20px 70px;
+        min-height: 100vh;
+
         display: flex;
-        flex-direction: row-reverse;
-        min-height: 600px;
-        overflow: hidden;
-        .left{
-            flex: 1;
-            /*change image here too something that suits later*/
-            background: linear-gradient(rgba(39, 11, 96, 0.5), rgba(39, 11, 96, 0.5)), url('https://images.pexels.com/photos/5076513/pexels-photo-5076513.jpeg') center;
-            background-size: cover;
-            padding: 50px;
+        align-items: center;
+        justify-content: center;
+
+        .card {
+            width: 800px;
+            border-radius: 10px;
+            background-color: themed("background-color");
             display: flex;
-            flex-direction: column;
-            gap: 30px;
-            color: white;
+            flex-direction: row-reverse; // keep original reversed layout
+            overflow: hidden;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.08);
 
-            h1{
-                font-size: 100px;
-                line-height: 100px;
-            }
-            p{}
-            span{
-                font-size: 14px;
-            }
-            button{
-                width: 50%;
-                padding: 10px;
-                border: none;
-                background-color: white;
-                color: rebeccapurple;
-                font-weight: bold;
-                cursor: pointer;
-            }
-        }
-
-        .right{
-            flex: 1;
-            padding: 50px;
-            display: flex;
-            flex-direction: column;
-            gap: 50px;
-            justify-content: center;
-            h1{
-                color: #555;
-
-            }
-            form{
+            .left {
+                flex: 1;
+                background: linear-gradient(rgba(0,0,0,0.25), rgba(0,0,0,0.25)), url('https://images.pexels.com/photos/5076513/pexels-photo-5076513.jpeg') center;
+                background-size: cover;
+                padding: 30px;
                 display: flex;
                 flex-direction: column;
-                gap: 30px;
-                input{
-                    border: none;
-                    border-bottom: 1px solid lightgray;
-                    padding: 20px 10px;
+                gap: 16px;
+                color: white;
+
+                h1 {
+                    font-size: 36px;
+                    line-height: 1.1;
+                    margin: 0;
                 }
-                button{
-                    width: 50%;
+                p { margin: 0; opacity: 0.95; }
+                span { font-size: 14px; }
+                button {
+                    width: 140px;
                     padding: 10px;
                     border: none;
-                    background-color: #938eef;
-                    color: white;
+                    background-color: white;
+                    color: themed("logo");
                     font-weight: bold;
                     cursor: pointer;
+                    border-radius: 6px;
+                }
+            }
+
+            .right {
+                flex: 1;
+                padding: 40px;
+                display: flex;
+                flex-direction: column;
+                gap: 24px;
+                justify-content: center;
+
+                h1 { color: themed("textColorSoft"); margin: 0; }
+                form {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 16px;
+                    input {
+                        border: 1px solid themed("border");
+                        padding: 12px 10px;
+                        border-radius: 6px;
+                        background-color: themed("bgSoft");
+                        color: themed("text-color");
+                    }
+                    button {
+                        width: 140px;
+                        padding: 10px;
+                        border: none;
+                        background-color: themed("logo");
+                        color: white;
+                        font-weight: bold;
+                        cursor: pointer;
+                        border-radius: 6px;
+                    }
                 }
             }
         }
+
+        @include mobile { padding: 12px; .card { width: 100%; flex-direction: column; } }
     }
 }

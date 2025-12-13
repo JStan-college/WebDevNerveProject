@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import "./Login.scss";
-import { useState } from "react";
+import { useState, useContext } from "react";
+import { DarkModeContext } from "../../context/darkModeContext";
 
 const Login = () => {
 
@@ -41,9 +42,12 @@ const Login = () => {
     }
     
   }
+  const { darkMode } = useContext(DarkModeContext);
+
   return (
-    <div className="login">
-      <div className="card">
+    <div className={`theme-${darkMode ? "dark" : "light"}`}>
+      <div className="login">
+        <div className="card">
         <div className="left">
           <h1>Hello World.</h1>
           <p>
@@ -66,6 +70,7 @@ const Login = () => {
           </form>
         </div>
       </div>
+    </div>
     </div>
   );
 }

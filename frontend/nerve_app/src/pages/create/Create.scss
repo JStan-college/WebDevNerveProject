@@ -1,38 +1,59 @@
+@import "../../style.scss";
+
 .create {
-height: 100vh;
-background-color: rgb(193, 190, 255);
-overflow: hidden;
-display: flex;
-align-items: center;
-justify-content: center;
-    .card {
-    width: 50%;
-    border-radius: 10px;
-    background-color: white;
-    display: flex;
-    min-height: 600px;
-    overflow: hidden;
-        h1{
-        color: #555;
-        }
-        form{
+    @include themify($themes) {
+        background-color: themed("bgSoft");
+        padding: 20px 70px;
+        min-height: 100vh;
+
         display: flex;
-        flex-direction: column;
-        gap: 30px;
-            input{
-                border: none;
-                border-bottom: 1px solid lightgray;
-                padding: 20px 10px;
-            }
-            button{
-                width: 50%;
-                padding: 10px;
-                border: none;
-                background-color: #938eef;
-                color: white;
-                font-weight: bold;
-                cursor: pointer;
+        align-items: center;
+        justify-content: center;
+
+        .card {
+            width: 800px;
+            border-radius: 10px;
+            background-color: themed("background-color");
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            padding: 36px;
+            overflow: hidden;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+
+            h1 { color: themed("textColorSoft"); margin: 0; }
+
+            form {
+                display: flex;
+                flex-direction: column;
+                gap: 16px;
+
+                input, textarea {
+                    border: 1px solid themed("border");
+                    padding: 12px 10px;
+                    border-radius: 6px;
+                    background-color: themed("bgSoft");
+                    color: themed("text-color");
+                }
+
+                textarea {
+                    min-height: 160px;
+                    resize: vertical;
+                }
+
+                button {
+                    width: 140px;
+                    padding: 10px;
+                    border: none;
+                    background-color: themed("logo");
+                    color: white;
+                    font-weight: bold;
+                    cursor: pointer;
+                    border-radius: 6px;
+                }
             }
         }
+
+        @include mobile { padding: 12px; .card { width: 100%; } }
     }
 }
