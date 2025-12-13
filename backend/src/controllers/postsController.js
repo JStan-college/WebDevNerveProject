@@ -12,7 +12,11 @@ export async function getAllPosts(_, res) {
 
 export async function createPost(req, res) {
     try {
-        const { title, content, userId, challengeId } = req.body;
+        const { title, content, challengeId } = req.body;
+        // Use server-verified user id from verifyToken middleware
+        const userId = req.user && req.user.id;
+        if (!userId) return res.status(401).json({ message: 'Unauthorized' });
+
         const newPost = new Post({ title, content, user_id: userId, challengeId });
 
         const savedPost = await newPost.save();
@@ -25,12 +29,24 @@ export async function createPost(req, res) {
 
 export async function updatePost(req, res) {
     try {
-        const {title, content, score} = req.body;
-        const updatedPost = await Post.findByIdAndUpdate(req.params.id, {title, content, score}, { new: true });
-        
-        if (!updatedPost) return res.status(404).json({ message: "Post not found" });
+        const { title, content, score } = req.body;
 
-        res.status(200).json({message: "Post updated successfully", post: updatedPost});
+        const post = await Post.findById(req.params.id);
+        if (!post) return res.status(404).json({ message: "Post not found" });
+
+        // Only the owner (author) can update the post
+        const userId = req.user && req.user.id;
+        if (!userId) return res.status(401).json({ message: 'Unauthorized' });
+        if (post.user_id.toString() !== userId.toString()) {
+            return res.status(403).json({ message: 'Forbidden: not post owner' });
+        }
+
+        post.title = title ?? post.title;
+        post.content = content ?? post.content;
+        if (typeof score !== 'undefined') post.score = score;
+
+        const updatedPost = await post.save();
+        res.status(200).json({ message: "Post updated successfully", post: updatedPost });
     } catch (error) {
         console.error(error);
         res.status(400).json({ message: "Bad request" });
@@ -39,9 +55,16 @@ export async function updatePost(req, res) {
 
 export async function deletePost(req, res) {
     try {
-        const deletedPost = await Post.findByIdAndDelete(req.params.id);
-        if (!deletedPost) return res.status(404).json({ message: 'Post not found' });
+        const post = await Post.findById(req.params.id);
+        if (!post) return res.status(404).json({ message: 'Post not found' });
 
+        const userId = req.user && req.user.id;
+        if (!userId) return res.status(401).json({ message: 'Unauthorized' });
+        if (post.user_id.toString() !== userId.toString()) {
+            return res.status(403).json({ message: 'Forbidden: not post owner' });
+        }
+
+        const deletedPost = await Post.findByIdAndDelete(req.params.id);
         res.status(200).json({ message: 'Post deleted', post: deletedPost });
     } catch (err) {
         res.status(500).json({ message: err.message });

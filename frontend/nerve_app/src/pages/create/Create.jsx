@@ -1,22 +1,39 @@
 import "./Create.scss";
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import { DarkModeContext } from "../../context/darkModeContext";
+import { AuthContext } from "../../context/authContext";
+import { useNavigate } from "react-router-dom";
 
 
 const Create = () => {
     const [title, setTitle] = useState("");
     const [content, setContent] = useState("");
     
+    const { user } = useContext(AuthContext);
+    const { loading } = useContext(AuthContext);
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        // If we've finished loading auth and there's no user, redirect to login
+        if (loading === false && !user) {
+            navigate('/login');
+        }
+    }, [loading, user, navigate]);
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         console.log(title);
         console.log(content);
-        //placeholder id until challenge id and user id is implemented
-        const tempUserid = "123abc";
-        const tempChallengeid = "125abc";
-        const token = localStorage.getItem("token");
+        // Ensure user exists (server will also verify token)
+        if (!user) {
+            console.error('User not authenticated');
+            return;
+        }
 
-        const newPost = {title, content, userId: tempUserid, challengeId: tempChallengeid};
+        const token = localStorage.getItem("token");
+        const tempChallengeid = "125abc";
+        // Do NOT send userId from client - server derives author from token
+        const newPost = { title, content, challengeId: tempChallengeid };
 
         try {
             const response = await fetch("http://localhost:8080/api/posts", {

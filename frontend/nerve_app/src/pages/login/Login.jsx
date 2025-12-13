@@ -2,11 +2,14 @@ import { Link } from "react-router-dom";
 import "./Login.scss";
 import { useState, useContext } from "react";
 import { DarkModeContext } from "../../context/darkModeContext";
+import { AuthContext } from "../../context/authContext";
 
 const Login = () => {
 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("")
+
+  const { setUser, reload } = useContext(AuthContext);
 
   const handleLogin = async(e) => {
     e.preventDefault();
@@ -24,8 +27,12 @@ const Login = () => {
     
     const result = await response.json();
 
+
     if (response.ok) {
       localStorage.setItem("token", result.token);
+      // set user from response if available, otherwise reload from server
+      if (result.user) setUser(result.user);
+      else reload();
       console.log("Logged In!");
     } else {
       console.error(result.message);
