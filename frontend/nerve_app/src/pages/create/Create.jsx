@@ -3,6 +3,7 @@ import { useState, useContext, useEffect } from "react";
 import { DarkModeContext } from "../../context/darkModeContext";
 import { AuthContext } from "../../context/authContext";
 import { useNavigate } from "react-router-dom";
+import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
 
 
 const Create = () => {
@@ -59,8 +60,11 @@ const Create = () => {
     return (
         <div className={`theme-${darkMode ? "dark" : "light"}`}>
           <div className="create">
-            <div className="card">
-                <h1>Create A New Post</h1>
+                        <div className="card">
+                                <button className="back-button" onClick={() => navigate('/')} aria-label="Close">
+                                    <CloseOutlinedIcon />
+                                </button>
+                                <h1>Create A New Post</h1>
                 <form onSubmit={handleSubmit}>
                     <input type="text" 
                     placeholder="Title" 
