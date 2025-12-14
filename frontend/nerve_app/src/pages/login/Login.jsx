@@ -3,6 +3,7 @@ import "./Login.scss";
 import { useState, useContext } from "react";
 import { DarkModeContext } from "../../context/darkModeContext";
 import { AuthContext } from "../../context/authContext";
+import { toast } from 'react-hot-toast';
 import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
 
 const Login = () => {
@@ -35,10 +36,12 @@ const Login = () => {
       if (result.user) setUser(result.user);
       // always reload to ensure todaysChallenge is fetched and auth state is consistent
       await reload();
+      toast.success('Logged in');
       console.log("Logged In!");
       navigate('/', { replace: true });
     } else {
       console.error(result.message);
+      toast.error(result?.message || 'Login failed');
     }
 
 

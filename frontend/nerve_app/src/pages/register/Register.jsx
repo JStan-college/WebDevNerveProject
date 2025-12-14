@@ -3,6 +3,7 @@ import "./Register.scss";
 import { useState, useContext } from "react";
 import { DarkModeContext } from "../../context/darkModeContext";
 import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
+import { toast } from 'react-hot-toast';
 
 const Register = () => {
 
@@ -26,10 +27,16 @@ const Register = () => {
     
     const result = await response.json();
     console.log("User Created:", result);
-
-    setUsername("");
-    setEmail("");
-    setPassword("");
+    if (response.ok) {
+      toast.success('Account created');
+      setUsername("");
+      setEmail("");
+      setPassword("");
+      // Optionally navigate to login
+      // navigate('/login');
+    } else {
+      toast.error(result?.message || 'Registration failed');
+    }
 
     } catch (error) {
       console.error("Error creating user:", error);

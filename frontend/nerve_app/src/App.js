@@ -13,6 +13,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import "./style.scss";
 import { DarkModeContext } from "./context/darkModeContext";
 import { useContext} from 'react';
+import { Toaster } from 'react-hot-toast';
 
 
 function App() {
@@ -73,6 +74,7 @@ function App() {
 
   return (
     <div>
+      <Toaster />
       <RouterProvider router={router} />
     </div>
   );

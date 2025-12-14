@@ -1,5 +1,6 @@
 import "./Create.scss";
 import { useState, useContext, useEffect } from "react";
+import { toast } from 'react-hot-toast';
 import { DarkModeContext } from "../../context/darkModeContext";
 import { AuthContext } from "../../context/authContext";
 import { useNavigate } from "react-router-dom";
@@ -25,9 +26,15 @@ const Create = () => {
         e.preventDefault();
         console.log(title);
         console.log(content);
+        // Client-side validation
+        if (!title || !content) {
+            toast.error('Title and content are required');
+            return;
+        }
+
         // Ensure user exists (server will also verify token)
         if (!user) {
-            console.error('User not authenticated');
+            toast.error('You must be logged in to create a post');
             return;
         }
 
@@ -37,6 +44,7 @@ const Create = () => {
         // Do NOT send userId from client - server derives author from token
         const newPost = { title, content, ...(challengeId ? { challengeId } : {}) };
 
+        const hadChallenge = Boolean(todaysChallenge);
         try {
             const response = await fetch("http://localhost:8080/api/posts", {
                 method: "POST",
@@ -47,14 +55,20 @@ const Create = () => {
             const result = await response.json();
             if (!response.ok) {
                 console.error('Create failed', result);
+                toast.error(result?.message || 'Failed to create post');
                 return;
             }
 
+            toast.success('Post created successfully');
             console.log("Post created", result);
 
             setTitle("");
             setContent("");
-            // If server returned updated user, update via reload (reload will fetch fresh challenge)
+            // If the server returned an updated user, check if the challenge was cleared
+            if (hadChallenge && result.user && !result.user.challengeToday) {
+                toast.success("Great job — you completed today's challenge!");
+            }
+            // Update auth state (reload will fetch fresh challenge)
             if (reload) await reload();
             // navigate back to home after successful creation
             navigate('/');
@@ -67,9 +81,9 @@ const Create = () => {
 
     const { darkMode } = useContext(DarkModeContext);
 
-    return (
-        <div className={`theme-${darkMode ? "dark" : "light"}`}>
-          <div className="create">
+        return (
+                <div className={`theme-${darkMode ? "dark" : "light"}`}>
+                    <div className="create">
                         <div className="card">
                                 <button className="back-button" onClick={() => navigate('/')} aria-label="Close">
                                     <CloseOutlinedIcon />

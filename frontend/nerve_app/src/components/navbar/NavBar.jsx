@@ -12,6 +12,7 @@ import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
 import { Link } from "react-router-dom";
 import { DarkModeContext } from "../../context/darkModeContext";
 import { useContext, useState, useEffect, useRef } from 'react';
+import { toast } from 'react-hot-toast';
 import { AuthContext } from '../../context/authContext';
 
 const NavBar = () => {
@@ -23,6 +24,7 @@ const NavBar = () => {
   const [challengeError, setChallengeError] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
   const notificationsRef = useRef(null);
+  const prevChallengeRef = useRef(null);
 
   let navigate = useNavigate();
   
@@ -40,6 +42,16 @@ const NavBar = () => {
     document.addEventListener('mousedown', handleOutsideClick);
     return () => document.removeEventListener('mousedown', handleOutsideClick);
   }, [showNotifications]);
+
+  // Show a small toast when a todaysChallenge becomes available (e.g., right after login)
+  useEffect(() => {
+    const prev = prevChallengeRef.current;
+    if (!prev && todaysChallenge && isLoggedIn) {
+      // only notify once when it appears
+      toast.success(`Today's challenge: ${todaysChallenge.title}`);
+    }
+    prevChallengeRef.current = todaysChallenge;
+  }, [todaysChallenge, isLoggedIn]);
 
   // Debounced search function
   const handleSearchSubmit = (e) => {
