@@ -10,6 +10,7 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 import Posts from "../../components/posts/Posts"
 import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect, useContext } from "react";
+import { toast } from 'react-hot-toast';
 import { AuthContext } from "../../context/authContext";
 
 const Profile = () => {
@@ -31,12 +32,20 @@ const Profile = () => {
     const fetchUserProfile = async () => {
       try {
         const response = await fetch(`http://localhost:8080/api/users/${userId}`);
-        if (response.ok) {
-          const user = await response.json();
-          setUserProfile(user);
+        if (!response.ok) {
+          // If the user doesn't exist (404) or other error, show toast and redirect home
+          toast.error('User not found');
+          navigate('/');
+          return null;
         }
+        const user = await response.json();
+        setUserProfile(user);
+        return user;
       } catch (err) {
         console.error("Error fetching user profile:", err);
+        //toast.error('User not found');
+        navigate('/');
+        return null;
       }
     };
 
@@ -57,7 +66,11 @@ const Profile = () => {
     const loadProfileData = async () => {
       setLoading(true);
       if (userId) {
-        await fetchUserProfile();
+        const found = await fetchUserProfile();
+        if (!found) {
+          setLoading(false);
+          return;
+        }
         await fetchUserPosts();
         setLoading(false);
       }
