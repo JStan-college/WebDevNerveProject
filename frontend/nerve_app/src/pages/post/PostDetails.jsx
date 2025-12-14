@@ -11,6 +11,7 @@ import ShareOutlinedIcon from '@mui/icons-material/ShareOutlined';
 import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
 import { timeAgoOrDate } from '../../utils/date';
 import { useParams, useNavigate } from 'react-router-dom';
+import { toast } from 'react-hot-toast';
 
 const PostDetails = () => {
     const { id } = useParams();
@@ -150,6 +151,28 @@ const PostDetails = () => {
         }
     }
 
+    const handleDelete = async () => {
+        if (!window.confirm('Delete this post? This cannot be undone.')) return;
+        try {
+            const token = localStorage.getItem('token');
+            const res = await fetch(`http://localhost:8080/api/posts/${id}`, {
+                method: 'DELETE',
+                headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }
+            });
+            if (res.ok) {
+                toast.success('Post deleted');
+                // navigate back to home after delete
+                navigate('/');
+            } else {
+                const err = await res.json().catch(() => null);
+                toast.error(err?.message || 'Failed to delete post');
+            }
+        } catch (err) {
+            console.error('Error deleting post:', err);
+            alert('Error deleting post');
+        }
+    }
+
     const handleLike = async () => {
         if (!user) {
             navigate('/login');
@@ -201,9 +224,11 @@ const PostDetails = () => {
                             <div className="actions" style={{marginTop: 12}}>
                                 <button className="action like" onClick={handleLike}>{liked ? <FavoriteOutlinedIcon/> : <FavoriteBorderOutlinedIcon/>} {likeCount} Likes</button>
                                 <button className="action comment"><TextsmsOutlinedIcon/> Comment</button>
-                                <button className="action share"><ShareOutlinedIcon/> Share</button>
                                 {isOwner && (
-                                    <button onClick={() => setIsEditing(true)} className="action edit">Edit</button>
+                                    <>
+                                        <button onClick={() => setIsEditing(true)} className="action edit">Edit</button>
+                                        <button onClick={handleDelete} className="action delete">Delete</button>
+                                    </>
                                 )}
                             </div>
                             <div className="comments-section">
