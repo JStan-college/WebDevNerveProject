@@ -1,7 +1,8 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "./Register.scss";
 import { useState, useContext } from "react";
 import { DarkModeContext } from "../../context/darkModeContext";
+import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
 
 const Register = () => {
 
@@ -37,11 +38,15 @@ const Register = () => {
   }
 
   const { darkMode } = useContext(DarkModeContext);
+  const navigate = useNavigate();
 
   return (
     <div className={`theme-${darkMode ? "dark" : "light"}`}>
       <div className="register">
         <div className="card">
+          <button className="back-button" onClick={() => navigate('/')} aria-label="Close">
+            <CloseOutlinedIcon />
+          </button>
         <div className="left">
           <h1>Nerve</h1>
           <p>

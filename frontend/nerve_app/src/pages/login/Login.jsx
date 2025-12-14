@@ -1,8 +1,9 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "./Login.scss";
 import { useState, useContext } from "react";
 import { DarkModeContext } from "../../context/darkModeContext";
 import { AuthContext } from "../../context/authContext";
+import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
 
 const Login = () => {
 
@@ -34,6 +35,7 @@ const Login = () => {
       if (result.user) setUser(result.user);
       else reload();
       console.log("Logged In!");
+      navigate('/', { replace: true });
     } else {
       console.error(result.message);
     }
@@ -50,11 +52,15 @@ const Login = () => {
     
   }
   const { darkMode } = useContext(DarkModeContext);
+  const navigate = useNavigate();
 
   return (
     <div className={`theme-${darkMode ? "dark" : "light"}`}>
       <div className="login">
         <div className="card">
+          <button className="back-button" onClick={() => navigate('/')} aria-label="Close">
+            <CloseOutlinedIcon />
+          </button>
         <div className="left">
           <h1>Hello World.</h1>
           <p>
