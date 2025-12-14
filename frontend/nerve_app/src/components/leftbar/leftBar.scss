@@ -22,36 +22,126 @@
     }
     .container {
         padding: 20px;
-        .menu {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            .user{
+        
+        .leaderboard {
+            background-color: themed("bgSoft");
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+            .leaderboard-header {
                 display: flex;
                 align-items: center;
                 gap: 10px;
-                img{
-                    width: 30px;
-                    height: 30px;
-                    border-radius: 50%;
-                    object-fit: cover;
-                }
-                span{
+                margin-bottom: 20px;
+                padding-bottom: 15px;
+                border-bottom: 2px solid themed("border");
 
+                .trophy-icon {
+                    color: #FFD700;
+                    font-size: 28px;
                 }
 
+                h2 {
+                    margin: 0;
+                    font-size: 20px;
+                    font-weight: 600;
+                    color: themed("text-color");
+                }
             }
 
-            .item{
-                display: flex;
-                align-items: center;
-                gap: 10px;
-                img{
-                    width: 30px;
+            .loading,
+            .no-users {
+                text-align: center;
+                padding: 20px;
+                color: themed("textColorSoft");
+                font-size: 14px;
+            }
 
-                }
-                span{
-                    font-size: 14px;
+            .leaderboard-list {
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+
+                .leaderboard-item {
+                    display: flex;
+                    align-items: center;
+                    gap: 15px;
+                    padding: 12px;
+                    background-color: themed("background-color");
+                    border-radius: 8px;
+                    transition: all 0.3s ease;
+                    border-left: 4px solid themed("border");
+
+                    &:hover {
+                        background-color: themed("bgSoft");
+                        transform: translateX(4px);
+                    }
+
+                    &.rank-1 {
+                        border-left-color: #FFD700;
+                        background: linear-gradient(135deg, rgba(255, 215, 0, 0.1) 0%, transparent 100%);
+                    }
+
+                    &.rank-2 {
+                        border-left-color: #C0C0C0;
+                        background: linear-gradient(135deg, rgba(192, 192, 192, 0.1) 0%, transparent 100%);
+                    }
+
+                    &.rank-3 {
+                        border-left-color: #CD7F32;
+                        background: linear-gradient(135deg, rgba(205, 127, 50, 0.1) 0%, transparent 100%);
+                    }
+
+                    .rank-badge {
+                        min-width: 40px;
+                        height: 40px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        font-weight: 700;
+                        font-size: 16px;
+                        border-radius: 50%;
+                        background-color: themed("logo");
+                        color: white;
+
+                        &.rank-1 {
+                            background-color: #FFD700;
+                            color: #333;
+                        }
+
+                        &.rank-2 {
+                            background-color: #C0C0C0;
+                            color: #333;
+                        }
+
+                        &.rank-3 {
+                            background-color: #CD7F32;
+                            color: white;
+                        }
+                    }
+
+                    .user-info {
+                        flex: 1;
+                        display: flex;
+                        flex-direction: column;
+                        gap: 4px;
+                        min-width: 0;
+
+                        .username {
+                            font-weight: 600;
+                            font-size: 14px;
+                            color: themed("text-color");
+                            overflow: hidden;
+                            text-overflow: ellipsis;
+                            white-space: nowrap;
+                        }
+
+                        .likes {
+                            font-size: 12px;
+                            color: themed("textColorSoft");
+                        }
+                    }
                 }
             }
         }
