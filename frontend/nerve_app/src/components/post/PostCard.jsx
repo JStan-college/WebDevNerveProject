@@ -10,7 +10,7 @@ import Comments from "../comments/Comments";
 import {useState} from 'react';
 import PostOptions from "../postoptions/PostOptions";
 
-const PostCard = ({post, onPostDeleted}) => {
+const PostCard = ({post, onPostDeleted, username}) => {
 
     const [commentOpen, setCommentOpen] = useState(false);
 
@@ -21,6 +21,7 @@ const PostCard = ({post, onPostDeleted}) => {
     const liked = false;
 
     
+    // username is passed from parent (Posts) via batch fetch to avoid per-post requests
 
     return (
         <div className={`post ${hidden ? 'hidden' : ''}`}>
@@ -30,6 +31,7 @@ const PostCard = ({post, onPostDeleted}) => {
                         <div className="details">
                             <Link to={`/profile/${post.user_id}`} style={{textDecoration:"none", color:"inherit"}}>
                             </Link>
+                            <span className="username">{username || post.user_id}</span>
                             <span className="date">{timeAgoOrDate(post.createdAt)}</span>
                         </div>
                     </div>
