@@ -43,10 +43,20 @@ export async function createComment(req, res) {
 
 export async function updateComment(req, res) {
     try {
-        const { content, score } = req.body;
-        const updatedComment = await Comment.findByIdAndUpdate(req.params.id, {content, score}, { new: true });
+        const { content } = req.body;
+        const comment = await Comment.findById(req.params.id);
         
-        if (!updatedComment) return res.status(404).json({ message: "Comment not found" });
+        if (!comment) return res.status(404).json({ message: "Comment not found" });
+
+        // Only the owner can update the comment
+        const userId = req.user && req.user.id;
+        if (!userId) return res.status(401).json({ message: 'Unauthorized' });
+        if (comment.user_id.toString() !== userId.toString()) {
+            return res.status(403).json({ message: 'Forbidden: not comment owner' });
+        }
+
+        comment.content = content ?? comment.content;
+        const updatedComment = await comment.save();
 
         res.status(200).json({message: "Comment updated successfully", comment: updatedComment});
     } catch (error) {
@@ -57,9 +67,17 @@ export async function updateComment(req, res) {
 
 export async function deleteComment(req, res) {
     try {
-        const deletedComment = await Comment.findByIdAndDelete(req.params.id);
-        if (!deletedComment) return res.status(404).json({ message: 'Comment not found' });
+        const comment = await Comment.findById(req.params.id);
+        if (!comment) return res.status(404).json({ message: 'Comment not found' });
 
+        // Only the owner can delete the comment
+        const userId = req.user && req.user.id;
+        if (!userId) return res.status(401).json({ message: 'Unauthorized' });
+        if (comment.user_id.toString() !== userId.toString()) {
+            return res.status(403).json({ message: 'Forbidden: not comment owner' });
+        }
+
+        const deletedComment = await Comment.findByIdAndDelete(req.params.id);
         res.status(200).json({ message: 'Comment deleted', comment: deletedComment });
     } catch (err) {
         res.status(500).json({ message: err.message });

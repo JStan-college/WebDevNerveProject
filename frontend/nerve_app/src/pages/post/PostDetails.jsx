@@ -146,7 +146,10 @@ const PostDetails = () => {
                                     <button onClick={() => setIsEditing(true)} className="action edit">Edit</button>
                                 )}
                             </div>
-                            <Comments postId={id} />
+                            <div className="comments-section">
+                                <h3>Comments</h3>
+                                <Comments postId={id} />
+                            </div>
                         </>
                     ) : (
                         <div className="edit-form">

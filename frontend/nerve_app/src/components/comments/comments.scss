@@ -2,66 +2,250 @@
 
 .comments{
     @include themify($themes){
-        img{
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            object-fit: cover;
-        }
-
         .write{
             display: flex;
             align-items: center;
-            justify-content: center;
-            gap: 20px;
-            max-width: 20px 0px;
+            gap: 12px;
+            margin-bottom: 20px;
+            padding: 12px;
+            background-color: themed("bgSoft");
+            border-radius: 8px;
 
+            &.login-prompt {
+                justify-content: space-between;
+                align-items: center;
+
+                p {
+                    margin: 0;
+                    color: themed("textColorSoft");
+                }
+
+                button {
+                    padding: 6px 14px !important;
+                    font-size: 13px !important;
+                }
+            }
 
             input{
-                flex: 5;
-                padding: 10px; 
+                flex: 1;
+                padding: 8px 12px;
                 border: 1px solid themed("border");
-                background-color: transparent;
+                background-color: themed("background-color");
                 color: themed("text-color");
+                border-radius: 6px;
+                font-family: inherit;
+                font-size: 14px;
+
+                &::placeholder {
+                    color: themed("textColorSoft");
+                    opacity: 0.6;
+                }
             }
 
             button{
                 border: none;
-                background-color: #5271ff;
+                background-color: themed("logo");
                 color: white;
-                padding: 10px;
+                padding: 8px 16px;
                 cursor: pointer;
-                border-radius: 3px;
+                border-radius: 6px;
+                font-weight: 500;
+                transition: opacity 0.2s;
+                white-space: nowrap;
+
+                &:hover {
+                    opacity: 0.8;
+                }
             }
         }
 
         .comment{
-            margin: 30px 0px;
+            margin: 16px 0;
             display: flex;
             justify-content: space-between;
-            gap: 20px;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid themed("border");
+            position: relative;
+
+            &:last-child {
+                border-bottom: none;
+            }
+
+            .comment-content {
+                flex: 1;
+                display: flex;
+                justify-content: space-between;
+                align-items: flex-start;
+                gap: 12px;
+                min-width: 0;
+            }
 
             .info{
-                flex: 5;
+                flex: 1;
                 display: flex;
                 flex-direction: column;
-                gap: 3px;
-                align-items: flex-start;
+                gap: 6px;
+                min-width: 0;
 
-                span{
-                    font-weight: 500;
+                .username {
+                    font-weight: 600;
+                    color: themed("text-color");
+                    font-size: 13px;
                 }
 
                 p{
-                    color: themed("textColorSoft");
+                    color: themed("text-color");
+                    margin: 0;
+                    line-height: 1.4;
+                    font-size: 14px;
+                    word-break: break-word;
+                }
+
+                .edit-form {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 8px;
+                    margin: 8px 0;
+
+                    textarea {
+                        padding: 8px 12px;
+                        border: 1px solid themed("border");
+                        background-color: themed("background-color");
+                        color: themed("text-color");
+                        border-radius: 6px;
+                        font-family: inherit;
+                        font-size: 14px;
+                        resize: vertical;
+                        min-height: 60px;
+
+                        &::placeholder {
+                            color: themed("textColorSoft");
+                            opacity: 0.6;
+                        }
+                    }
+
+                    .edit-buttons {
+                        display: flex;
+                        gap: 8px;
+
+                        .save-btn, .cancel-btn {
+                            padding: 6px 12px;
+                            border: none;
+                            border-radius: 4px;
+                            cursor: pointer;
+                            font-size: 13px;
+                            font-weight: 500;
+                            transition: opacity 0.2s;
+                        }
+
+                        .save-btn {
+                            background-color: themed("logo");
+                            color: white;
+
+                            &:hover {
+                                opacity: 0.8;
+                            }
+                        }
+
+                        .cancel-btn {
+                            background-color: themed("bgSoft");
+                            color: themed("text-color");
+                            border: 1px solid themed("border");
+
+                            &:hover {
+                                opacity: 0.7;
+                            }
+                        }
+                    }
                 }
             }
 
             .date{
-                flex: 1;
-                align-self: center;
-                color: gray;
+                font-size: 12px;
+                color: themed("textColorSoft");
+                opacity: 0.7;
+                flex-shrink: 0;
+                white-space: nowrap;
             }
+
+            .comment-options {
+                position: relative;
+                flex-shrink: 0;
+
+                .options-btn {
+                    background: none;
+                    border: none;
+                    cursor: pointer;
+                    padding: 4px;
+                    color: themed("textColorSoft");
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    transition: color 0.2s;
+
+                    &:hover {
+                        color: themed("text-color");
+                    }
+
+                    svg {
+                        width: 20px;
+                        height: 20px;
+                    }
+                }
+
+                .menu {
+                    position: absolute;
+                    top: 100%;
+                    right: 0;
+                    background-color: themed("bgSoft");
+                    border: 1px solid themed("border");
+                    border-radius: 6px;
+                    overflow: hidden;
+                    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+                    z-index: 1000;
+                    min-width: 120px;
+
+                    .edit-btn, .delete-btn {
+                        display: block;
+                        width: 100%;
+                        padding: 10px 12px;
+                        border: none;
+                        background: none;
+                        color: themed("text-color");
+                        text-align: left;
+                        cursor: pointer;
+                        font-size: 13px;
+                        transition: background-color 0.2s;
+                        border-bottom: 1px solid themed("border");
+
+                        &:last-child {
+                            border-bottom: none;
+                        }
+
+                        &:hover {
+                            background-color: themed("background-color");
+                        }
+                    }
+
+                    .delete-btn {
+                        color: #d32f2f;
+
+                        &:hover {
+                            background-color: rgba(211, 47, 47, 0.1);
+                        }
+                    }
+                }
+            }
+        }
+
+        .no-comments {
+            text-align: center;
+            padding: 20px;
+            color: themed("textColorSoft");
+            font-size: 14px;
+            font-style: italic;
         }
     }
 

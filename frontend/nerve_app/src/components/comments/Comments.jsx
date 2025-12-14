@@ -1,13 +1,21 @@
 import "./comments.scss";
-import {useState, useEffect} from 'react';
+import {useState, useEffect, useContext} from 'react';
 import { useNavigate } from "react-router-dom";
+import { timeAgoOrDate } from "../../utils/date";
+import { AuthContext } from "../../context/authContext";
+import { MoreHoriz } from "@mui/icons-material";
 
 
 const Comments = ({ postId }) => {
     const [comments, setComments] = useState([]);
     const [commentText, setCommentText] = useState("");
     const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [userMap, setUserMap] = useState({});
+    const [editingId, setEditingId] = useState(null);
+    const [editText, setEditText] = useState("");
+    const [openMenuId, setOpenMenuId] = useState(null);
     const navigate = useNavigate();
+    const { user } = useContext(AuthContext);
     
     useEffect(() => {
         // Check if user is logged in
@@ -25,7 +33,9 @@ const Comments = ({ postId }) => {
                     method: "GET",
                 });
                 const result = await response.json();
-                setComments(Array.isArray(result) ? result : []);
+                const commentsArray = Array.isArray(result) ? result : [];
+                setComments(commentsArray);
+                fetchUsernames(commentsArray);
             } catch (error) {
                 console.error("error fetching comments", error);
                 setComments([]);
@@ -34,6 +44,22 @@ const Comments = ({ postId }) => {
 
         getComments();
     }, [postId]);
+
+    const fetchUsernames = async (commentsToFetch) => {
+        // batch-fetch unique users for these comments
+        const userIds = Array.from(new Set(commentsToFetch.map(c => c.user_id).filter(Boolean)));
+        if (userIds.length > 0) {
+            try {
+                const userFetches = userIds.map(id => fetch(`http://localhost:8080/api/users/${id}`).then(r => r.ok ? r.json() : null));
+                const users = await Promise.all(userFetches);
+                const map = {};
+                users.forEach(u => { if (u && (u.id || u._id)) map[u.id || u._id] = u.username || u.name || null; });
+                setUserMap(map);
+            } catch (err) {
+                console.error('Failed to batch fetch users', err);
+            }
+        }
+    };
 
     const handleAddComment = async (e) => {
         e.preventDefault();
@@ -76,6 +102,59 @@ const Comments = ({ postId }) => {
         }
     };
 
+    const handleDeleteComment = async (commentId) => {
+        if (!window.confirm("Are you sure you want to delete this comment?")) return;
+
+        try {
+            const token = localStorage.getItem("token");
+            const response = await fetch(`http://localhost:8080/api/comments/${commentId}`, {
+                method: "DELETE",
+                headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+            });
+
+            if (response.ok) {
+                setComments(comments.filter(c => c._id !== commentId));
+                setOpenMenuId(null);
+            } else {
+                alert("Failed to delete comment");
+            }
+        } catch (error) {
+            console.error("Error deleting comment:", error);
+        }
+    };
+
+    const handleEditComment = async (commentId) => {
+        if (!editText.trim()) {
+            alert("Comment cannot be empty");
+            return;
+        }
+
+        try {
+            const token = localStorage.getItem("token");
+            const response = await fetch(`http://localhost:8080/api/comments/${commentId}`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+                body: JSON.stringify({ content: editText })
+            });
+
+            if (response.ok) {
+                const updatedComment = await response.json();
+                setComments(comments.map(c => c._id === commentId ? updatedComment.comment : c));
+                setEditingId(null);
+                setEditText("");
+                setOpenMenuId(null);
+            } else {
+                alert("Failed to update comment");
+            }
+        } catch (error) {
+            console.error("Error updating comment:", error);
+        }
+    };
+
+    const isOwner = (commentUserId) => {
+        return user && (user.id?.toString() === commentUserId?.toString() || user._id?.toString() === commentUserId?.toString());
+    };
+
     return (
         <div className="comments">
             {isLoggedIn ? (
@@ -86,7 +165,7 @@ const Comments = ({ postId }) => {
                         value={commentText}
                         onChange={(e) => setCommentText(e.target.value)}
                     />
-                    <button type="submit">Send</button>
+                    <button type="submit">Post</button>
                 </form>
             ) : (
                 <div className="write login-prompt">
@@ -97,11 +176,57 @@ const Comments = ({ postId }) => {
             {comments && comments.length > 0 ? (
                 comments.map(comment => (
                     <div className="comment" key={comment._id}>
-                        <img src={comment.profilePicture || "https://via.placeholder.com/32"} alt="" />
-                        <div className="info">
-                            <p>{comment.content}</p>
+                        <div className="comment-content">
+                            <div className="info">
+                                <span className="username">{userMap[comment.user_id] || "Anonymous"}</span>
+                                {editingId === comment._id ? (
+                                    <div className="edit-form">
+                                        <textarea 
+                                            value={editText} 
+                                            onChange={(e) => setEditText(e.target.value)}
+                                            placeholder="Edit your comment"
+                                        />
+                                        <div className="edit-buttons">
+                                            <button onClick={() => handleEditComment(comment._id)} className="save-btn">Save</button>
+                                            <button onClick={() => { setEditingId(null); setEditText(""); }} className="cancel-btn">Cancel</button>
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <p>{comment.content}</p>
+                                )}
+                            </div>
+                            <span className="date">{timeAgoOrDate(comment.createdAt)}</span>
                         </div>
-                        <span className="date">1 hour ago</span>
+                        {isOwner(comment.user_id) && !editingId && (
+                            <div className="comment-options">
+                                <button 
+                                    className="options-btn"
+                                    onClick={() => setOpenMenuId(openMenuId === comment._id ? null : comment._id)}
+                                >
+                                    <MoreHoriz />
+                                </button>
+                                {openMenuId === comment._id && (
+                                    <div className="menu">
+                                        <button 
+                                            onClick={() => {
+                                                setEditingId(comment._id);
+                                                setEditText(comment.content);
+                                                setOpenMenuId(null);
+                                            }}
+                                            className="edit-btn"
+                                        >
+                                            Edit
+                                        </button>
+                                        <button 
+                                            onClick={() => handleDeleteComment(comment._id)}
+                                            className="delete-btn"
+                                        >
+                                            Delete
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
+                        )}
                     </div>
                 ))
             ) : (
