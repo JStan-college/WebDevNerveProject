@@ -17,9 +17,12 @@ import { AuthContext } from '../../context/authContext';
 const NavBar = () => {
 
   const {toggle, darkMode} = useContext(DarkModeContext);
-  const { user, logout } = useContext(AuthContext);
+  const { user, logout, todaysChallenge, loadingChallenge, reload } = useContext(AuthContext);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [challengeError, setChallengeError] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const notificationsRef = useRef(null);
 
   let navigate = useNavigate();
   
@@ -27,6 +30,16 @@ const NavBar = () => {
     // derive logged-in state from AuthContext user
     setIsLoggedIn(!!user);
   }, [user]);
+
+  useEffect(() => {
+    function handleOutsideClick(e) {
+      if (showNotifications && notificationsRef.current && !notificationsRef.current.contains(e.target)) {
+        setShowNotifications(false);
+      }
+    }
+    document.addEventListener('mousedown', handleOutsideClick);
+    return () => document.removeEventListener('mousedown', handleOutsideClick);
+  }, [showNotifications]);
 
   // Debounced search function
   const handleSearchSubmit = (e) => {
@@ -64,6 +77,26 @@ const NavBar = () => {
     }
   }
 
+  const fetchChallengeIfNeeded = async () => {
+    setChallengeError(null);
+    try {
+      // if not loaded, ask AuthContext to reload (which will fetch challenge)
+      if (!todaysChallenge && !loadingChallenge) {
+        await reload();
+      }
+    } catch (err) {
+      setChallengeError('Failed to load');
+    }
+  };
+
+  const toggleNotifications = async () => {
+    const next = !showNotifications;
+    setShowNotifications(next);
+    if (next) {
+      await fetchChallengeIfNeeded();
+    }
+  }
+
   return (
     <div className="navbar">
       <div className="left">
@@ -87,9 +120,28 @@ const NavBar = () => {
 
       </div>
       <div className="right">
-        <PersonOutlinedIcon onClick={() => navigate(`/profile/${user._id}`)} style={{cursor: 'pointer'}}/>
+        <PersonOutlinedIcon onClick={() => user && navigate(`/profile/${user._id}`)} style={{cursor: 'pointer'}}/>
         {/*<EmailOutlinedIcon/>*/}
-        <NotificationsOutlinedIcon/>
+        <div className="notifications" ref={notificationsRef}>
+          <NotificationsOutlinedIcon onClick={toggleNotifications} style={{ cursor: 'pointer' }} />
+          {showNotifications && (
+            <div className="notifications-dropdown">
+              {loadingChallenge ? (
+                <div className="nd-loading">Loading...</div>
+              ) : challengeError ? (
+                <div className="nd-error">{challengeError}</div>
+              ) : todaysChallenge ? (
+                <div className="nd-content">
+                  <h4>{todaysChallenge.title}</h4>
+                  <p className="genre">{todaysChallenge.genre}</p>
+                  <button onClick={() => { navigate(`/create`); setShowNotifications(false); }} className="nd-view-btn">Complete!</button>
+                </div>
+              ) : (
+                <div className="nd-empty">No challenge assigned</div>
+              )}
+            </div>
+          )}
+        </div>
         {/*
         <div className="user">
           <img src="https://images.pexels.com/photos/3228727/pexels-photo-3228727.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=500" alt=""/>

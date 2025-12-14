@@ -122,6 +122,43 @@
                 }
             }
 
+            .notifications {
+                position: relative;
+
+                .notifications-dropdown {
+                    position: absolute;
+                    top: 36px;
+                    right: 0;
+                    width: 260px;
+                    background-color: themed("background-color");
+                    border: 1px solid themed("border");
+                    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+                    padding: 12px;
+                    border-radius: 8px;
+                    z-index: 60;
+
+                    .nd-loading,
+                    .nd-error,
+                    .nd-empty {
+                        color: themed("textColorSoft");
+                        font-size: 14px;
+                    }
+
+                    .nd-content {
+                        h4 { margin: 0 0 6px 0; color: themed("text-color"); }
+                        .genre { margin: 0 0 8px 0; color: themed("textColorSoft"); font-size: 13px; }
+                        .nd-view-btn {
+                            padding: 6px 10px;
+                            border-radius: 6px;
+                            border: none;
+                            background-color: themed("logo");
+                            color: white;
+                            cursor: pointer;
+                        }
+                    }
+                }
+            }
+
             .login-btn {
                 background-color: themed("logo");
                 color: #fff;
