@@ -4,8 +4,7 @@ import LinkedInIcon from "@mui/icons-material/LinkedIn";
 import InstagramIcon from "@mui/icons-material/Instagram";
 import PinterestIcon from "@mui/icons-material/Pinterest";
 import TwitterIcon from "@mui/icons-material/Twitter";
-import PlaceIcon from "@mui/icons-material/Place";
-import LanguageIcon from "@mui/icons-material/Language";
+// Place and Language icons removed; social links moved into center info
 import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import Posts from "../../components/posts/Posts"
@@ -141,33 +140,34 @@ const Profile = () => {
       </div>
       <div className="profileContainer">
         <div className="uInfo">
-          <div className="left">
-            <a href="http://facebook.com">
-              <FacebookTwoToneIcon fontSize="large" />
-            </a>
-            <a href="http://facebook.com">
-              <InstagramIcon fontSize="large" />
-            </a>
-            <a href="http://facebook.com">
-              <TwitterIcon fontSize="large" />
-            </a>
-            <a href="http://facebook.com">
-              <LinkedInIcon fontSize="large" />
-            </a>
-            <a href="http://facebook.com">
-              <PinterestIcon fontSize="large" />
-            </a>
-          </div>
+          {/* social links moved into center info (left column removed) */}
           <div className="center">
             <span>{userProfile?.username || userProfile?.name || "User"}</span>
             <div className="info">
               <div className="item">
-                <PlaceIcon/>
-                <span>{userProfile?.location || "Location not specified"}</span>
+                <a href="http://facebook.com" aria-label="Facebook">
+                  <FacebookTwoToneIcon />
+                </a>
               </div>
               <div className="item">
-                <LanguageIcon/>
-                <span>{userProfile?.website || "Website not specified"}</span>
+                <a href="http://instagram.com" aria-label="Instagram">
+                  <InstagramIcon />
+                </a>
+              </div>
+              <div className="item">
+                <a href="http://twitter.com" aria-label="Twitter">
+                  <TwitterIcon />
+                </a>
+              </div>
+              <div className="item">
+                <a href="http://linkedin.com" aria-label="LinkedIn">
+                  <LinkedInIcon />
+                </a>
+              </div>
+              <div className="item">
+                <a href="http://pinterest.com" aria-label="Pinterest">
+                  <PinterestIcon />
+                </a>
               </div>
             </div>
             <div className="stats">

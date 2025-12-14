@@ -1,12 +1,8 @@
 import "./navBar.scss";
-import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
 import DarkModeOutlinedIcon from '@mui/icons-material/DarkModeOutlined';
-import GridViewOutlinedIcon from '@mui/icons-material/GridViewOutlined';
-import AddBoxOutlinedIcon from '@mui/icons-material/AddBoxOutlined';
 import { useNavigate } from "react-router-dom";
 import WbSunnyOutlinedIcon from '@mui/icons-material/WbSunnyOutlined';
 import NotificationsOutlinedIcon from '@mui/icons-material/NotificationsOutlined';
-import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
 import PersonOutlinedIcon from '@mui/icons-material/PersonOutlined';
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
 import { Link } from "react-router-dom";
@@ -141,10 +137,7 @@ const NavBar = () => {
         <Link to="/" style={{ textDecoration: "none" }}>
           <span>Nerve</span>
         </Link>
-        {/*<HomeOutlinedIcon/>*/}
         {darkMode ? <WbSunnyOutlinedIcon onClick={toggle}/> : <DarkModeOutlinedIcon onClick={toggle}/>}
-        {/*<GridViewOutlinedIcon/>*/}
-        <AddBoxOutlinedIcon onClick={createPage}/>
         <div className="search">
           <SearchOutlinedIcon onClick={handleSearchSubmit} style={{ cursor: 'pointer' }} />
           <input 
@@ -159,7 +152,6 @@ const NavBar = () => {
       </div>
       <div className="right">
         <PersonOutlinedIcon onClick={handleProfileClick} style={{cursor: 'pointer'}}/>
-        {/*<EmailOutlinedIcon/>*/}
         {isLoggedIn && (
           <div className={`notifications ${todaysChallenge ? 'has-challenge' : ''}`} ref={notificationsRef}>
             <NotificationsOutlinedIcon
@@ -194,12 +186,6 @@ const NavBar = () => {
             )}
           </div>
         )}
-        {/*
-        <div className="user">
-          <img src="https://images.pexels.com/photos/3228727/pexels-photo-3228727.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=500" alt=""/>
-          <span>John Doe</span>
-        </div>
-        */}
         {isLoggedIn ? (
           <button className="logout-btn" onClick={handleLogout}>Logout</button>
         ) : (

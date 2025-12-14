@@ -3,6 +3,10 @@
 .profile {
   @include themify($themes) {
     background-color: themed("bgSoft");
+    /* Ensure the profile page background covers the full viewport even with little content */
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
 
     .images {
       width: 100%;
@@ -25,10 +29,16 @@
         right: 0;
         margin: auto;
         top: 200px;
+        z-index: 30;
+        /* Add a border that matches the card background so it appears as a framed avatar */
+        border: 6px solid themed("background-color");
+        box-shadow: 0 6px 18px rgba(0,0,0,0.18);
       }
     }
     .profileContainer {
       padding: 20px 70px;
+      /* Allow container to expand to fill remaining space so background covers full screen */
+      flex: 1 0 auto;
 
       @include mobile{
         padding: 10px;
@@ -38,47 +48,36 @@
         padding: 20px;
       }
       .uInfo {
-        height: 180px;
+        /* allow flexible height and add top padding so avatar doesn't obscure content */
+        min-height: 180px;
         box-shadow: 0px 3px 6px 1px rgba(0,0,0,0.29);
         -webkit-box-shadow: 0px 3px 6px 1px rgba(0,0,0,0.29);
         -moz-box-shadow: 0px 3px 6px 1px rgba(0,0,0,0.29);
         border-radius: 20px;
         background-color: themed("background-color");
         color: themed("text-color");
-        padding: 50px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
+        padding: 80px 50px 50px; /* extra top padding to clear the avatar */
+        position: relative;
+        /* Ensure the card sits below the profile picture */
+        z-index: 1;
         margin-bottom: 20px;
 
         @include mobile{
-            flex-direction: column;
-            height: 30vh;
-            padding: 20px;
-            margin-top: 100px;
-
+          /* Stack for small screens */
+          display: block;
+          min-height: auto;
+          padding: 20px;
+          margin-top: 100px;
         }
 
 
-        .left {
-          flex: 1;
-          display: flex;
-          gap: 10px;
-
-          @include tablet{
-            flex-wrap: wrap;
-          }
-
-          a{
-            color: themed("textColorSoft");
-          }
-        }
-
+        /* Removed .left column; center now occupies left/center space and is centered */
         .center {
           flex: 1;
           display: flex;
           flex-direction: column;
           align-items: center;
+          justify-content: center;
           gap: 10px;
 
           span {
@@ -110,7 +109,8 @@
             width: 100%;
             display: flex;
             align-items: center;
-            justify-content: space-around;
+            justify-content: center;
+            gap: 12px;
 
             .item {
               display: flex;
@@ -118,6 +118,7 @@
               gap: 5px;
               color: themed("textColorSoft");
 
+              a { color: themed("textColorSoft"); display: inline-flex; align-items: center; }
               span {
                 font-size: 12px;
               }
@@ -134,12 +135,14 @@
         }
 
         .right {
-          flex: 1;
+          /* Keep options aligned to the right edge of the card */
+          position: absolute;
+          right: 28px;
+          top: 50%;
+          transform: translateY(-50%);
           display: flex;
           align-items: center;
-          justify-content: flex-end;
           gap: 10px;
-          position: relative;
 
           .options-wrapper {
             position: relative;
