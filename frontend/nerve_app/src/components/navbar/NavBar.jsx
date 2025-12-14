@@ -70,7 +70,7 @@ const NavBar = () => {
         <Link to="/" style={{ textDecoration: "none" }}>
           <span>Nerve</span>
         </Link>
-        <HomeOutlinedIcon/>
+        {/*<HomeOutlinedIcon/>*/}
         {darkMode ? <WbSunnyOutlinedIcon onClick={toggle}/> : <DarkModeOutlinedIcon onClick={toggle}/>}
         {/*<GridViewOutlinedIcon/>*/}
         <AddBoxOutlinedIcon onClick={createPage}/>
@@ -87,13 +87,15 @@ const NavBar = () => {
 
       </div>
       <div className="right">
-        <PersonOutlinedIcon/>
-        <EmailOutlinedIcon/>
+        <PersonOutlinedIcon onClick={() => navigate(`/profile/${user._id}`)} style={{cursor: 'pointer'}}/>
+        {/*<EmailOutlinedIcon/>*/}
         <NotificationsOutlinedIcon/>
+        {/*
         <div className="user">
           <img src="https://images.pexels.com/photos/3228727/pexels-photo-3228727.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=500" alt=""/>
           <span>John Doe</span>
         </div>
+        */}
         {isLoggedIn ? (
           <button className="logout-btn" onClick={handleLogout}>Logout</button>
         ) : (

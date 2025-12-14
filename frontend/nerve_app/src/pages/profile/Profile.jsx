@@ -9,8 +9,49 @@ import LanguageIcon from "@mui/icons-material/Language";
 import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import Posts from "../../components/posts/Posts"
+import { useParams } from "react-router-dom";
+import { useState, useEffect } from "react";
 
 const Profile = () => {
+  const { id: userId } = useParams();
+  const [userProfile, setUserProfile] = useState(null);
+  const [userPosts, setUserPosts] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      try {
+        const response = await fetch(`http://localhost:8080/api/users/${userId}`);
+        if (response.ok) {
+          const user = await response.json();
+          setUserProfile(user);
+        }
+      } catch (err) {
+        console.error("Error fetching user profile:", err);
+      }
+    };
+
+    const fetchUserPosts = async () => {
+      try {
+        const response = await fetch(`http://localhost:8080/api/posts`);
+        if (response.ok) {
+          const allPosts = await response.json();
+          // Filter posts to only show posts from this user
+          const filteredPosts = allPosts.filter(post => post.user_id === userId);
+          setUserPosts(filteredPosts);
+        }
+      } catch (err) {
+        console.error("Error fetching user posts:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (userId) {
+      fetchUserProfile();
+      fetchUserPosts();
+    }
+  }, [userId]);
   return (
     <div className="profile">
       <div className="images">
@@ -37,15 +78,15 @@ const Profile = () => {
             </a>
           </div>
           <div className="center">
-            <span>Jane Doe</span>
+            <span>{userProfile?.username || userProfile?.name || "User"}</span>
             <div className="info">
               <div className="item">
                 <PlaceIcon/>
-                <span>Ireland</span>
+                <span>{userProfile?.location || "Location not specified"}</span>
               </div>
               <div className="item">
                 <LanguageIcon/>
-                <span>Nerve.ie</span>
+                <span>{userProfile?.website || "Website not specified"}</span>
               </div>
             </div>
             <button>follow</button>
@@ -55,7 +96,11 @@ const Profile = () => {
             <MoreVertIcon/>
           </div>
         </div>
-        <Posts/>
+        {loading ? (
+          <div style={{ textAlign: 'center', padding: '20px', color: '#999' }}>Loading posts...</div>
+        ) : (
+          <Posts posts={userPosts}/>
+        )}
       </div>
     </div>
   );

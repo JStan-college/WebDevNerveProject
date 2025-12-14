@@ -32,7 +32,7 @@ const PostCard = ({post, onPostDeleted, username}) => {
                         <div className="details">
                             <Link to={`/profile/${post.user_id}`} style={{textDecoration:"none", color:"inherit"}}>
                             </Link>
-                            <span className="username">{username || post.user_id}</span>
+                            <span className="username" onClick={() => navigate(`/profile/${post.user_id}`)} style={{cursor: 'pointer'}}>{username || post.user_id}</span>
                             <span className="date">{timeAgoOrDate(post.createdAt)}</span>
                         </div>
                     </div>
