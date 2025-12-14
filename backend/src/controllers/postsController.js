@@ -157,6 +157,19 @@ export async function likePost(req, res) {
         post.likes.push(userId);
         const updatedPost = await post.save();
 
+        // Recompute reputation for the post author as total likes across their posts
+        try {
+            const agg = await Post.aggregate([
+                { $match: { user_id: post.user_id } },
+                { $project: { likesCount: { $size: { $ifNull: ["$likes", []] } } } },
+                { $group: { _id: null, total: { $sum: "$likesCount" } } }
+            ]);
+            const totalLikes = (agg && agg[0] && agg[0].total) ? agg[0].total : 0;
+            await User.findByIdAndUpdate(post.user_id, { reputation: totalLikes });
+        } catch (repErr) {
+            console.error('Failed to update user reputation after like:', repErr);
+        }
+
         res.status(200).json({ message: "Post liked successfully", post: updatedPost });
     } catch (err) {
         console.error(err);
@@ -182,6 +195,19 @@ export async function unlikePost(req, res) {
         // Remove user ID from likes array
         post.likes = post.likes.filter(id => id !== userId);
         const updatedPost = await post.save();
+
+        // Recompute reputation for the post author as total likes across their posts
+        try {
+            const agg = await Post.aggregate([
+                { $match: { user_id: post.user_id } },
+                { $project: { likesCount: { $size: { $ifNull: ["$likes", []] } } } },
+                { $group: { _id: null, total: { $sum: "$likesCount" } } }
+            ]);
+            const totalLikes = (agg && agg[0] && agg[0].total) ? agg[0].total : 0;
+            await User.findByIdAndUpdate(post.user_id, { reputation: totalLikes });
+        } catch (repErr) {
+            console.error('Failed to update user reputation after unlike:', repErr);
+        }
 
         res.status(200).json({ message: "Post unliked successfully", post: updatedPost });
     } catch (err) {

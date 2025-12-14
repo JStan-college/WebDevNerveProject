@@ -93,6 +93,16 @@ const Profile = () => {
                 <span>{userProfile?.website || "Website not specified"}</span>
               </div>
             </div>
+            <div className="stats">
+              <div className="stat-item">
+                <div className="stat-value">{(userProfile?.challengesCompleted ?? 0) + ' / ' + (userProfile?.challengesGiven ?? 0)}</div>
+                <div className="stat-label">Completed / Given</div>
+              </div>
+              <div className="stat-item">
+                <div className="stat-value">{userProfile?.reputation ?? 0}</div>
+                <div className="stat-label">Reputation</div>
+              </div>
+            </div>
             {/*<button>follow</button>*/}
           </div>
           <div className="right">
