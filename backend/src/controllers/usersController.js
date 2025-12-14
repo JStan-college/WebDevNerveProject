@@ -1,6 +1,7 @@
 import User from '../models/User.js';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import Challenge from '../models/Challenge.js';
 
 export async function getAllUsers(_, res) {
     try {
@@ -151,6 +152,50 @@ export async function getCurrentUser(req, res) {
   }
 }
 
+export async function getTodaysChallenge(req, res) {
+  try {
+    const userId = req.user && req.user.id;
+    if (!userId) return res.status(401).json({ message: 'Unauthorized' });
+
+    const user = await User.findById(userId);
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    const now = new Date();
+    const assignedAt = user.challengeAssignedAt;
+    const isSameDay = (d1, d2) => {
+      if (!d1 || !d2) return false;
+      return d1.getFullYear() === d2.getFullYear() && d1.getMonth() === d2.getMonth() && d1.getDate() === d2.getDate();
+    };
+
+    let challenge = null;
+
+    if (user.challengeToday && assignedAt && isSameDay(new Date(assignedAt), now)) {
+      challenge = await Challenge.findById(user.challengeToday);
+    } else {
+      // assign a new challenge for today if available
+      const count = await Challenge.countDocuments();
+      if (count > 0) {
+        const rand = Math.floor(Math.random() * count);
+        challenge = await Challenge.findOne().skip(rand);
+        if (challenge) {
+          user.challengeToday = challenge._id.toString();
+          user.challengeAssignedAt = now;
+          await user.save();
+        }
+      }
+    }
+
+    if (!challenge) {
+      return res.status(204).json({ message: 'No challenge available' });
+    }
+
+    res.status(200).json({ challenge });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Server error' });
+  }
+}
+
 export async function loginUser(req, res) {
   try {
     const { username, password } = req.body;
@@ -168,6 +213,32 @@ export async function loginUser(req, res) {
       { expiresIn: "1h" }
     );
 
+    // Assign a challenge for today if not already assigned today
+    try {
+      const now = new Date();
+      const assignedAt = user.challengeAssignedAt;
+      const isSameDay = (d1, d2) => {
+        if (!d1 || !d2) return false;
+        return d1.getFullYear() === d2.getFullYear() && d1.getMonth() === d2.getMonth() && d1.getDate() === d2.getDate();
+      }
+
+      if (!assignedAt || !isSameDay(new Date(assignedAt), now)) {
+        const count = await Challenge.countDocuments();
+        if (count > 0) {
+          const rand = Math.floor(Math.random() * count);
+          const challenge = await Challenge.findOne().skip(rand).select('_id');
+          if (challenge) {
+            user.challengeToday = challenge._id.toString();
+            user.challengeAssignedAt = now;
+            await user.save();
+          }
+        }
+      }
+    } catch (assignErr) {
+      console.error('Error assigning daily challenge:', assignErr);
+      // don't fail login on assignment errors
+    }
+
     res.status(200).json({
       message: "Login successful",
       token,
@@ -175,6 +246,8 @@ export async function loginUser(req, res) {
         id: user._id,
         username: user.username,
         email: user.email,
+        challengeToday: user.challengeToday || null,
+        challengeAssignedAt: user.challengeAssignedAt || null,
       },
     });
   } catch (err) {

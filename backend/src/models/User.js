@@ -9,6 +9,7 @@ const UserSchema = new Schema({
     challengesCompleted: { type: Number, default: 0 },
     challengesGiven: {type: Number, default: 0},
     challengeToday: {type: String, default: ""},
+    challengeAssignedAt: { type: Date, default: null },
     reputation: {type: Number, default: 0},
     imageurl: {type: String}
 }, { timestamps: true }
