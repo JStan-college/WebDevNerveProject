@@ -2,6 +2,8 @@ import User from '../models/User.js';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import Challenge from '../models/Challenge.js';
+import Post from '../models/Post.js';
+import Comment from '../models/Comment.js';
 
 export async function getAllUsers(_, res) {
     try {
@@ -116,10 +118,37 @@ export async function deleteUser(req, res) {
     const deletedUser = await User.findByIdAndDelete(req.params.id);
     if (!deletedUser) return res.status(404).json({ message: 'User not found' });
 
+    // Cascade delete: remove posts by this user and comments they authored and comments on their posts
     const userToReturn = deletedUser.toObject();
     delete userToReturn.password;
 
-    res.status(200).json({ message: 'User deleted', user: userToReturn });
+    let postsDeleted = 0;
+    let commentsDeletedAuthored = 0;
+    let commentsDeletedOnPosts = 0;
+
+    try {
+      // Find posts by the user
+      const posts = await Post.find({ user_id: req.params.id }).select('_id');
+      const postIds = posts.map(p => p._id.toString());
+
+      if (postIds.length > 0) {
+        // Delete comments on those posts first
+        const delOnPosts = await Comment.deleteMany({ post_id: { $in: postIds } });
+        commentsDeletedOnPosts = delOnPosts.deletedCount || 0;
+
+        // Delete the posts
+        const delPosts = await Post.deleteMany({ user_id: req.params.id });
+        postsDeleted = delPosts.deletedCount || 0;
+      }
+
+      // Delete comments authored by the user (on other posts)
+      const delAuthored = await Comment.deleteMany({ user_id: req.params.id });
+      commentsDeletedAuthored = delAuthored.deletedCount || 0;
+    } catch (cascadeErr) {
+      console.error('Error during cascade delete for user:', cascadeErr);
+    }
+
+    res.status(200).json({ message: 'User deleted', user: userToReturn, postsDeleted, commentsDeletedAuthored, commentsDeletedOnPosts });
     } catch (err) {
         res.status(500).json({ message: err.message });
     }

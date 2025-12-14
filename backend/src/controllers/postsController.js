@@ -1,6 +1,7 @@
 import Post from '../models/Post.js';
 import User from '../models/User.js';
 import Challenge from '../models/Challenge.js';
+import Comment from '../models/Comment.js';
 
 export async function getAllPosts(_, res) {
     try {
@@ -90,7 +91,16 @@ export async function deletePost(req, res) {
         }
 
         const deletedPost = await Post.findByIdAndDelete(req.params.id);
-        res.status(200).json({ message: 'Post deleted', post: deletedPost });
+
+        // Cascade delete comments related to this post
+        try {
+            const deleteResult = await Comment.deleteMany({ post_id: req.params.id });
+            return res.status(200).json({ message: 'Post deleted', post: deletedPost, commentsDeleted: deleteResult.deletedCount });
+        } catch (cErr) {
+            console.error('Failed to delete related comments:', cErr);
+            // Return success for post deletion but warn about comments
+            return res.status(200).json({ message: 'Post deleted (failed to delete some comments)', post: deletedPost });
+        }
     } catch (err) {
         res.status(500).json({ message: err.message });
     }
