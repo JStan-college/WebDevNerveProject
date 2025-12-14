@@ -9,14 +9,24 @@ import LanguageIcon from "@mui/icons-material/Language";
 import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import Posts from "../../components/posts/Posts"
-import { useParams } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { useState, useEffect, useContext } from "react";
+import { AuthContext } from "../../context/authContext";
 
 const Profile = () => {
   const { id: userId } = useParams();
+  const navigate = useNavigate();
+  const { user: currentUser } = useContext(AuthContext);
   const [userProfile, setUserProfile] = useState(null);
   const [userPosts, setUserPosts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [editUsername, setEditUsername] = useState("");
+  const [editEmail, setEditEmail] = useState("");
+  const [editingMode, setEditingMode] = useState(false);
+
+  // Check if current user is viewing their own profile
+  const isOwnProfile = currentUser && (currentUser.id?.toString() === userId || currentUser._id?.toString() === userId);
 
   useEffect(() => {
     const fetchUserProfile = async () => {
@@ -56,6 +66,73 @@ const Profile = () => {
 
     loadProfileData();
   }, [userId]);
+
+  const handleEditProfile = () => {
+    setEditUsername(userProfile?.username || "");
+    setEditEmail(userProfile?.email || "");
+    setEditingMode(true);
+    setMenuOpen(false);
+  };
+
+  const handleSaveProfile = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`http://localhost:8080/api/users/${userId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          username: editUsername,
+          email: editEmail
+        })
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        setUserProfile(result.user);
+        setEditingMode(false);
+        alert('Profile updated successfully!');
+      } else {
+        const error = await response.json();
+        alert(`Error: ${error.message}`);
+      }
+    } catch (err) {
+      console.error('Error updating profile:', err);
+      alert('Error updating profile');
+    }
+  };
+
+  const handleDeleteAccount = async () => {
+    if (!window.confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`http://localhost:8080/api/users/${userId}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (response.ok) {
+        alert('Account deleted successfully');
+        localStorage.removeItem('token');
+        navigate('/login');
+      } else {
+        const error = await response.json();
+        alert(`Error: ${error.message}`);
+      }
+    } catch (err) {
+      console.error('Error deleting account:', err);
+      alert('Error deleting account');
+    }
+  };
+
   return (
     <div className="profile">
       <div className="images">
@@ -106,10 +183,53 @@ const Profile = () => {
             {/*<button>follow</button>*/}
           </div>
           <div className="right">
-            {/*<EmailOutlinedIcon/>
-            <MoreVertIcon/>*/}
+            {isOwnProfile && (
+              <div className="options-wrapper">
+                <MoreVertIcon 
+                  onClick={() => setMenuOpen(!menuOpen)}
+                  style={{ cursor: 'pointer' }}
+                />
+                {menuOpen && (
+                  <div className="menu">
+                    <button onClick={handleEditProfile} className="edit-btn">Edit Profile</button>
+                    <button onClick={handleDeleteAccount} className="delete-btn">Delete Account</button>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </div>
+
+        {editingMode && (
+          <div className="edit-modal">
+            <div className="modal-content">
+              <h2>Edit Profile</h2>
+              <div className="form-group">
+                <label>Username:</label>
+                <input
+                  type="text"
+                  value={editUsername}
+                  onChange={(e) => setEditUsername(e.target.value)}
+                  placeholder="Username"
+                />
+              </div>
+              <div className="form-group">
+                <label>Email:</label>
+                <input
+                  type="email"
+                  value={editEmail}
+                  onChange={(e) => setEditEmail(e.target.value)}
+                  placeholder="Email"
+                />
+              </div>
+              <div className="modal-buttons">
+                <button onClick={handleSaveProfile} className="save-btn">Save Changes</button>
+                <button onClick={() => setEditingMode(false)} className="cancel-btn">Cancel</button>
+              </div>
+            </div>
+          </div>
+        )}
+
         {loading ? (
           <div style={{ textAlign: 'center', padding: '20px', color: '#999' }}>Loading posts...</div>
         ) : (

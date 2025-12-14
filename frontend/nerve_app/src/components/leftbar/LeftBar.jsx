@@ -11,42 +11,23 @@ const LeftBar = () => {
   useEffect(() => {
     const fetchTopUsers = async () => {
       try {
-        // Fetch all posts
-        const postsRes = await fetch('http://localhost:8080/api/posts');
-        if (!postsRes.ok) throw new Error('Failed to fetch posts');
-        const posts = await postsRes.json();
+        // Fetch all users
+        const usersRes = await fetch('http://localhost:8080/api/users');
+        if (!usersRes.ok) throw new Error('Failed to fetch users');
+        const users = await usersRes.json();
 
-        // Calculate total likes per user
-        const userLikes = {};
-        posts.forEach(post => {
-          if (post.user_id) {
-            userLikes[post.user_id] = (userLikes[post.user_id] || 0) + (post.likes?.length || 0);
-          }
-        });
-
-        // Get unique user IDs and sort by like count
-        const sortedUserIds = Object.entries(userLikes)
-          .sort((a, b) => b[1] - a[1])
+        // Sort users by reputation in descending order and take top 5
+        const topFive = users
+          .sort((a, b) => (b.reputation || 0) - (a.reputation || 0))
           .slice(0, 5)
-          .map(entry => entry[0]);
+          .map((user, index) => ({
+            rank: index + 1,
+            username: user.username,
+            likeCount: user.reputation || 0,
+            userId: user._id || user.id
+          }));
 
-        // Fetch user details for top users
-        const userDetailsPromises = sortedUserIds.map(userId =>
-          fetch(`http://localhost:8080/api/users/${userId}`)
-            .then(res => res.ok ? res.json() : null)
-        );
-
-        const userDetails = await Promise.all(userDetailsPromises);
-        
-        // Combine user details with like counts
-        const leaderboardData = sortedUserIds.map((userId, index) => ({
-          rank: index + 1,
-          username: userDetails[index]?.username || 'Unknown',
-          likeCount: userLikes[userId],
-          userId: userId
-        }));
-
-        setTopUsers(leaderboardData);
+        setTopUsers(topFive);
       } catch (err) {
         console.error('Error fetching leaderboard:', err);
       } finally {
@@ -80,7 +61,7 @@ const LeftBar = () => {
                   <div className="rank-badge">{user.rank}</div>
                   <div className="user-info">
                     <span className="username">{user.username}</span>
-                    <span className="likes">{user.likeCount} likes</span>
+                    <span className="likes">{user.likeCount} reputation</span>
                   </div>
                 </div>
               ))}

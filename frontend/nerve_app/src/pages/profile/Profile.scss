@@ -139,6 +139,156 @@
           align-items: center;
           justify-content: flex-end;
           gap: 10px;
+          position: relative;
+
+          .options-wrapper {
+            position: relative;
+
+            .menu {
+              position: absolute;
+              top: 100%;
+              right: 0;
+              background-color: themed("bgSoft");
+              border: 1px solid themed("border");
+              border-radius: 8px;
+              overflow: hidden;
+              box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+              z-index: 100;
+              min-width: 150px;
+              margin-top: 8px;
+
+              button {
+                display: block;
+                width: 100%;
+                padding: 12px 16px;
+                border: none;
+                background: none;
+                color: themed("text-color");
+                text-align: left;
+                cursor: pointer;
+                font-size: 14px;
+                transition: background-color 0.2s;
+                border-bottom: 1px solid themed("border");
+
+                &:last-child {
+                  border-bottom: none;
+                }
+
+                &:hover {
+                  background-color: themed("background-color");
+                }
+
+                &.edit-btn {
+                  color: themed("logo");
+                }
+
+                &.delete-btn {
+                  color: #d32f2f;
+
+                  &:hover {
+                    background-color: rgba(211, 47, 47, 0.1);
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+
+      .edit-modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+
+        .modal-content {
+          background-color: themed("background-color");
+          border-radius: 12px;
+          padding: 30px;
+          box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+          max-width: 400px;
+          width: 90%;
+
+          h2 {
+            margin-top: 0;
+            margin-bottom: 20px;
+            color: themed("text-color");
+            font-size: 24px;
+          }
+
+          .form-group {
+            margin-bottom: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+
+            label {
+              font-weight: 600;
+              color: themed("text-color");
+              font-size: 14px;
+            }
+
+            input {
+              padding: 10px 12px;
+              border: 1px solid themed("border");
+              border-radius: 6px;
+              background-color: themed("bgSoft");
+              color: themed("text-color");
+              font-size: 14px;
+              font-family: inherit;
+
+              &::placeholder {
+                color: themed("textColorSoft");
+              }
+
+              &:focus {
+                outline: none;
+                border-color: themed("logo");
+              }
+            }
+          }
+
+          .modal-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+
+            button {
+              flex: 1;
+              padding: 12px;
+              border: none;
+              border-radius: 6px;
+              font-size: 14px;
+              font-weight: 600;
+              cursor: pointer;
+              transition: opacity 0.2s;
+
+              &.save-btn {
+                background-color: themed("logo");
+                color: white;
+
+                &:hover {
+                  opacity: 0.8;
+                }
+              }
+
+              &.cancel-btn {
+                background-color: themed("bgSoft");
+                color: themed("text-color");
+                border: 1px solid themed("border");
+
+                &:hover {
+                  opacity: 0.7;
+                }
+              }
+            }
+          }
         }
       }
     }
