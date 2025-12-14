@@ -187,6 +187,8 @@ export async function getTodaysChallenge(req, res) {
         if (challenge) {
           user.challengeToday = challenge._id.toString();
           user.challengeAssignedAt = now;
+          // increment challengesGiven
+          user.challengesGiven = (user.challengesGiven || 0) + 1;
           await user.save();
         }
       }
@@ -237,6 +239,8 @@ export async function loginUser(req, res) {
           if (challenge) {
             user.challengeToday = challenge._id.toString();
             user.challengeAssignedAt = now;
+            // increment challengesGiven when assigning a new challenge at login
+            user.challengesGiven = (user.challengesGiven || 0) + 1;
             await user.save();
           }
         }

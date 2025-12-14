@@ -32,6 +32,10 @@ export async function createPost(req, res) {
         let clearedUser = null;
         try {
             if (user) {
+                // If the user had an assigned challengeToday, count this as completed
+                if (user.challengeToday) {
+                    user.challengesCompleted = (user.challengesCompleted || 0) + 1;
+                }
                 user.challengeToday = "";
                 const updatedUser = await user.save();
                 clearedUser = await User.findById(updatedUser._id).select('-password');
