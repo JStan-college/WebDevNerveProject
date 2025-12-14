@@ -1,8 +1,15 @@
 import Comment from '../models/Comment.js';
 
-export async function getAllComments(_, res) {
+export async function getAllComments(req, res) {
     try {
-        const comments = await Comment.find().sort({ createdAt: -1 });
+        const { postId } = req.query;
+        
+        let query = {};
+        if (postId) {
+            query = { post_id: postId };
+        }
+        
+        const comments = await Comment.find(query).sort({ createdAt: -1 });
         res.status(200).json(comments);
     } catch (err) {
         console.error(err);
@@ -12,11 +19,22 @@ export async function getAllComments(_, res) {
 
 export async function createComment(req, res) {
     try {
-        const { post_id, user_id, content } = req.body;
-        const newComment = new Comment({ post_id, user_id, content });
+        // user_id comes from JWT token in middleware
+        const { content, postId } = req.body;
+        const userId = req.user.id;
+
+        if (!content || !postId) {
+            return res.status(400).json({ message: "Content and postId are required" });
+        }
+
+        const newComment = new Comment({ 
+            post_id: postId, 
+            user_id: userId, 
+            content 
+        });
 
         const savedComment = await newComment.save();
-        res.status(201).json({ message: "Comment created successfully", comment: savedComment });
+        res.status(201).json(savedComment);
     } catch (err) {
         console.error(err);
         res.status(400).json({ message: "Bad request" });

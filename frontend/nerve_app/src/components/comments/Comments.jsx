@@ -1,68 +1,112 @@
 import "./comments.scss";
 import {useState, useEffect} from 'react';
+import { useNavigate } from "react-router-dom";
 
 
-const Comments = () => {
+const Comments = ({ postId }) => {
     const [comments, setComments] = useState([]);
+    const [commentText, setCommentText] = useState("");
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const navigate = useNavigate();
     
-    //Temporary
-    /*
-    const comments = [
-        {
-        id: 1,
-        desc: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Autem nequeaspernatur ullam aperiam. Lorem ipsum dolor sit amet consectetur adipisicing elit. Autem nequeaspernatur ullam aperiam",
-        name: "John Doe",
-        userId: 1,
-        profilePicture:
-            "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
-        },
-        {
-        id: 2,
-        desc: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Autem nequeaspernatur ullam aperiam",
-        name: "Jane Doe",
-        userId: 2,
-        profilePicture:
-            "https://images.pexels.com/photos/1036623/pexels-photo-1036623.jpeg?auto=compress&cs=tinysrgb&w=1600",
-        },
-    ];
-    */
+    useEffect(() => {
+        // Check if user is logged in
+        const token = localStorage.getItem('token');
+        setIsLoggedIn(!!token);
+    }, []);
 
     useEffect(() => {
-            const getComments = async () => {
-                const url = "http://localhost:8080/api/comments";
-                try {
-                    const response = await fetch(url, {
-                        method: "GET",
-                    });
-                    const result = await response.json();
-                    console.log(result);
-                    setComments(result)
-                } catch (error) {
-                    console.error("error fetching posts");
-                }
-            };
-    
-            getComments();
-        }, []);
+        if (!postId) return;
+        
+        const getComments = async () => {
+            const url = `http://localhost:8080/api/comments?postId=${postId}`;
+            try {
+                const response = await fetch(url, {
+                    method: "GET",
+                });
+                const result = await response.json();
+                setComments(Array.isArray(result) ? result : []);
+            } catch (error) {
+                console.error("error fetching comments", error);
+                setComments([]);
+            }
+        };
+
+        getComments();
+    }, [postId]);
+
+    const handleAddComment = async (e) => {
+        e.preventDefault();
+        
+        if (!isLoggedIn) {
+            alert("Please log in to comment");
+            navigate('/login');
+            return;
+        }
+
+        if (!commentText.trim()) {
+            alert("Comment cannot be empty");
+            return;
+        }
+
+        try {
+            const token = localStorage.getItem('token');
+            const response = await fetch("http://localhost:8080/api/comments", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    content: commentText,
+                    postId: postId
+                })
+            });
+
+            if (response.ok) {
+                const newComment = await response.json();
+                setComments([newComment, ...comments]);
+                setCommentText("");
+            } else {
+                alert("Failed to add comment");
+            }
+        } catch (error) {
+            console.error("error adding comment", error);
+            alert("Error adding comment");
+        }
+    };
 
     return (
         <div className="comments">
-            <div className="write">
-                {/*Profile picture on comments needs to be fixed when user authentication is done */}
-                {/*<img src={comments.profilePicture} alt="" />*/}
-                <input type="text" placeholder="write a comment" />
-                <button>Send</button>
-            </div>
-            {comments?.map(comment=>(
-                <div className="comment">
-                <img src={comment.profilePicture} alt="" />
-                <div className="info">
-                    {/*<span>{comment.user_id}</span>*/}
-                    <p>{comment.content}</p>
+            {isLoggedIn ? (
+                <form className="write" onSubmit={handleAddComment}>
+                    <input 
+                        type="text" 
+                        placeholder="write a comment" 
+                        value={commentText}
+                        onChange={(e) => setCommentText(e.target.value)}
+                    />
+                    <button type="submit">Send</button>
+                </form>
+            ) : (
+                <div className="write login-prompt">
+                    <p>Log in to comment</p>
+                    <button onClick={() => navigate('/login')}>Login</button>
                 </div>
-                <span className="date">1 hour ago</span>
-                </div>
-            ))}
+            )}
+            {comments && comments.length > 0 ? (
+                comments.map(comment => (
+                    <div className="comment" key={comment._id}>
+                        <img src={comment.profilePicture || "https://via.placeholder.com/32"} alt="" />
+                        <div className="info">
+                            <p>{comment.content}</p>
+                        </div>
+                        <span className="date">1 hour ago</span>
+                    </div>
+                ))
+            ) : (
+                <div className="no-comments">No comments yet</div>
+            )}
         </div>
     )
 };

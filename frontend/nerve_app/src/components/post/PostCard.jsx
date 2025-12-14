@@ -4,7 +4,7 @@ import FavoriteBorderOutlinedIcon from "@mui/icons-material/FavoriteBorderOutlin
 import FavoriteOutlinedIcon from "@mui/icons-material/FavoriteOutlined";
 import TextsmsOutlinedIcon from "@mui/icons-material/TextsmsOutlined";
 import ShareOutlinedIcon from "@mui/icons-material/ShareOutlined";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { timeAgoOrDate } from "../../utils/date";
 import Comments from "../comments/Comments";
 import {useState} from 'react';
@@ -13,6 +13,7 @@ import PostOptions from "../postoptions/PostOptions";
 const PostCard = ({post, onPostDeleted, username}) => {
 
     const [commentOpen, setCommentOpen] = useState(false);
+    const navigate = useNavigate();
 
     const [optionsOpen, setOptionsOpen] = useState(false);
     const [hidden, setHidden] = useState(false);
@@ -60,7 +61,7 @@ const PostCard = ({post, onPostDeleted, username}) => {
                         {liked ? <FavoriteOutlinedIcon/> : <FavoriteBorderOutlinedIcon/>}
                         {post.score} Likes
                     </div>
-                    <div className="item" onClick={()=>setCommentOpen(!commentOpen)}>
+                    <div className="item" onClick={() => navigate(`/post/${post._id}`)}>
                         <TextsmsOutlinedIcon/>
                         12 Comments
                     </div>

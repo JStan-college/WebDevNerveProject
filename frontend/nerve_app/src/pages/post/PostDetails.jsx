@@ -3,6 +3,7 @@ import "./PostDetails.scss";
 import {useState, useEffect, useContext} from 'react';
 import { DarkModeContext } from '../../context/darkModeContext';
 import { AuthContext } from '../../context/authContext';
+import Comments from '../../components/comments/Comments';
 import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined';
 import TextsmsOutlinedIcon from '@mui/icons-material/TextsmsOutlined';
 import ShareOutlinedIcon from '@mui/icons-material/ShareOutlined';
@@ -109,6 +110,7 @@ const PostDetails = () => {
                                     <button onClick={() => setIsEditing(true)} className="action edit">Edit</button>
                                 )}
                             </div>
+                            <Comments postId={id} />
                         </>
                     ) : (
                         <div className="edit-form">
