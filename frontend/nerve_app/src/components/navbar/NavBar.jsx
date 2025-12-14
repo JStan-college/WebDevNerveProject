@@ -20,9 +20,6 @@ const NavBar = () => {
   const { user, logout } = useContext(AuthContext);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [searchResults, setSearchResults] = useState([]);
-  const [showDropdown, setShowDropdown] = useState(false);
-  const debounceTimer = useRef(null);
 
   let navigate = useNavigate();
   
@@ -32,44 +29,12 @@ const NavBar = () => {
   }, [user]);
 
   // Debounced search function
-  const searchableList = async (query) => {
-    if (!query.trim()) {
-      setSearchResults([]);
-      setShowDropdown(false);
-      return;
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      navigate(`/search?q=${encodeURIComponent(searchQuery)}`);
+      setSearchQuery("");
     }
-
-    try {
-      const res = await fetch(`http://localhost:8080/api/posts/search?q=${encodeURIComponent(query)}`);
-      const posts = await res.json();
-      setSearchResults(Array.isArray(posts) ? posts : []);
-      setShowDropdown(true);
-    } catch (err) {
-      console.error('Search error:', err);
-      setSearchResults([]);
-    }
-  };
-
-  const handleSearchChange = (e) => {
-    const query = e.target.value;
-    setSearchQuery(query);
-
-    // Clear previous timer
-    if (debounceTimer.current) {
-      clearTimeout(debounceTimer.current);
-    }
-
-    // Set new timer for debounced search (500ms delay)
-    debounceTimer.current = setTimeout(() => {
-      searchableList(query);
-    }, 500);
-  };
-
-  const handleSelectPost = (postId) => {
-    navigate(`/post/${postId}`);
-    setSearchQuery("");
-    setSearchResults([]);
-    setShowDropdown(false);
   };
 
   const createPage = () => {
@@ -110,30 +75,14 @@ const NavBar = () => {
         {/*<GridViewOutlinedIcon/>*/}
         <AddBoxOutlinedIcon onClick={createPage}/>
         <div className="search">
-          <SearchOutlinedIcon/>
+          <SearchOutlinedIcon onClick={handleSearchSubmit} style={{ cursor: 'pointer' }} />
           <input 
             type="text" 
             placeholder="Search..." 
             value={searchQuery}
-            onChange={handleSearchChange}
-            onFocus={() => searchResults.length > 0 && setShowDropdown(true)}
-            onBlur={() => setTimeout(() => setShowDropdown(false), 200)}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            onKeyPress={(e) => e.key === 'Enter' && handleSearchSubmit(e)}
           />
-          {showDropdown && searchResults.length > 0 && (
-            <div className="search-dropdown">
-              {searchResults.map(post => (
-                <div
-                  key={post._id}
-                  onClick={() => handleSelectPost(post._id)}
-                >
-                  <strong>{post.title}</strong>
-                  <div>
-                    {post.content.substring(0, 50)}...
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
         </div>
 
       </div>

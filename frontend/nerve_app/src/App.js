@@ -1,6 +1,7 @@
 import Login from "./pages/login/Login";
 import Register from "./pages/register/Register";
 import Create from "./pages/create/Create";
+import SearchResults from "./pages/search/SearchResults";
 import { createBrowserRouter, RouterProvider, Outlet } from "react-router-dom";
 import LeftBar from "./components/leftbar/LeftBar";
 import RightBar from "./components/rightbar/RightBar";
@@ -49,6 +50,10 @@ function App() {
         {
           path: "/post/:id",
           element: <PostDetails />
+        },
+        {
+          path: "/search",
+          element: <SearchResults />
         }
       ],
     },

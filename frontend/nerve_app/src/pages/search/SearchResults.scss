@@ -1,0 +1,190 @@
+@import "../../style.scss";
+
+.searchResults {
+  @include themify($themes) {
+    padding: 20px;
+    background-color: themed("background-color");
+    color: themed("text-color");
+    min-height: 100vh;
+
+    @include mobile{
+      padding: 10px;
+    }
+
+    .header {
+      margin-bottom: 30px;
+      border-bottom: 1px solid themed("border");
+      padding-bottom: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 20px;
+
+      @include mobile{
+        margin-bottom: 20px;
+        gap: 10px;
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      h1 {
+        font-size: 28px;
+        font-weight: bold;
+        margin-bottom: 10px;
+        color: themed("text-color");
+        flex: 1;
+
+        @include mobile{
+          font-size: 20px;
+          margin-bottom: 5px;
+          width: 100%;
+        }
+      }
+
+      .resultCount {
+        font-size: 14px;
+        color: themed("text-color");
+        opacity: 0.7;
+        flex: 1;
+
+        @include mobile{
+          font-size: 12px;
+          width: 100%;
+        }
+      }
+
+      .filterToggle {
+        padding: 8px 16px;
+        background-color: themed("logo");
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-weight: 500;
+        transition: opacity 0.3s;
+        white-space: nowrap;
+
+        @include mobile{
+          padding: 6px 12px;
+          font-size: 12px;
+          width: 100%;
+        }
+
+        &:hover {
+          opacity: 0.8;
+        }
+      }
+    }
+
+    .filterPanel {
+      background-color: themed("background-color");
+      border: 1px solid themed("border");
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 30px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      align-items: end;
+      box-shadow: 0px 3px 6px 1px rgba(0, 0, 0, 0.29);
+      -webkit-box-shadow: 0px 3px 6px 1px rgba(0, 0, 0, 0.29);
+      -moz-box-shadow: 0px 3px 6px 1px rgba(0, 0, 0, 0.29);
+
+      @include mobile{
+        padding: 15px;
+        grid-template-columns: 1fr;
+        gap: 12px;
+        margin-bottom: 20px;
+      }
+
+      .filterGroup {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+
+        @include mobile{
+          gap: 6px;
+        }
+
+        label {
+          font-weight: 600;
+          font-size: 14px;
+          color: themed("text-color");
+
+          @include mobile{
+            font-size: 12px;
+          }
+        }
+
+        select,
+        input {
+          padding: 8px 12px;
+          border: 1px solid themed("text-color");
+          border-radius: 4px;
+          background-color: themed("background-color");
+          color: themed("text-color");
+          font-size: 14px;
+          cursor: pointer;
+
+          @include mobile{
+            padding: 6px 10px;
+            font-size: 12px;
+          }
+
+          &:focus {
+            outline: none;
+            border-color: themed("logo");
+            box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1);
+          }
+        }
+      }
+
+      .resetBtn {
+        padding: 8px 16px;
+        background-color: #ff6b6b;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        width: 100%;
+
+        @include mobile{
+          padding: 6px 12px;
+          font-size: 12px;
+        }
+        font-weight: 500;
+        transition: background-color 0.3s;
+
+        &:hover {
+          background-color: #ee5a52;
+        }
+      }
+    }
+
+    .loading,
+    .error,
+    .noResults {
+      text-align: center;
+      padding: 40px 20px;
+      font-size: 16px;
+    }
+
+    .loading {
+      color: themed("text-color");
+    }
+
+    .error {
+      color: #ff6b6b;
+      background-color: rgba(255, 107, 107, 0.1);
+      padding: 20px;
+      border-radius: 8px;
+    }
+
+    .noResults {
+      color: themed("text-color");
+      opacity: 0.6;
+      font-style: italic;
+    }
+  }
+}

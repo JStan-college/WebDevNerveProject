@@ -1,4 +1,5 @@
 import Post from '../models/Post.js';
+import User from '../models/User.js';
 
 export async function getAllPosts(_, res) {
     try {
@@ -90,11 +91,20 @@ export async function searchPosts(req, res) {
             return res.status(200).json([]);
         }
 
+        // Search for users by username
+        const matchingUsers = await User.find({
+            username: { $regex: q, $options: "i" }
+        });
+
+        const userIds = matchingUsers.map(u => u._id.toString());
+
         // Use $regex with $options: "i" for case-insensitive pattern matching
+        // Search in title, content, AND by creator username
         const posts = await Post.find({
             $or: [
                 { title: { $regex: q, $options: "i" } },
-                { content: { $regex: q, $options: "i" } }
+                { content: { $regex: q, $options: "i" } },
+                { user_id: { $in: userIds } }
             ]
         }).sort({ createdAt: -1 });
 
