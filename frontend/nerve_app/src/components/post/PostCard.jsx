@@ -7,22 +7,54 @@ import ShareOutlinedIcon from "@mui/icons-material/ShareOutlined";
 import { Link, useNavigate } from "react-router-dom";
 import { timeAgoOrDate } from "../../utils/date";
 import Comments from "../comments/Comments";
-import {useState} from 'react';
+import {useState, useEffect, useContext} from 'react';
 import PostOptions from "../postoptions/PostOptions";
+import { AuthContext } from "../../context/authContext";
 
 const PostCard = ({post, onPostDeleted, username}) => {
 
     const [commentOpen, setCommentOpen] = useState(false);
     const navigate = useNavigate();
+    const { user } = useContext(AuthContext);
 
     const [optionsOpen, setOptionsOpen] = useState(false);
     const [hidden, setHidden] = useState(false);
+    const [liked, setLiked] = useState(false);
+    const [likeCount, setLikeCount] = useState(post.likes ? post.likes.length : 0);
 
-    //needs to be fixed
-    const liked = false;
+    useEffect(() => {
+        // Check if current user has liked this post
+        if (user && post.likes) {
+            const userId = user._id || user.id;
+            setLiked(post.likes.includes(userId));
+        }
+    }, [post, user]);
 
-    
-    // username is passed from parent (Posts) via batch fetch to avoid per-post requests
+    const handleLike = async () => {
+        if (!user) {
+            navigate('/login');
+            return;
+        }
+
+        try {
+            const token = localStorage.getItem('token');
+            const endpoint = liked ? 'unlike' : 'like';
+            const response = await fetch(`http://localhost:8080/api/posts/${post._id}/${endpoint}`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (response.ok) {
+                setLiked(!liked);
+                setLikeCount(liked ? likeCount - 1 : likeCount + 1);
+            }
+        } catch (err) {
+            console.error('Error updating like:', err);
+        }
+    };
 
     return (
         <div className={`post ${hidden ? 'hidden' : ''}`}>
@@ -57,9 +89,9 @@ const PostCard = ({post, onPostDeleted, username}) => {
                     </Link>
                 </div>
                 <div className="info">
-                    <div className="item">
+                    <div className="item" onClick={handleLike} style={{cursor: 'pointer'}}>
                         {liked ? <FavoriteOutlinedIcon/> : <FavoriteBorderOutlinedIcon/>}
-                        {post.score} Likes
+                        {likeCount} Likes
                     </div>
                     <div className="item" onClick={() => navigate(`/post/${post._id}`)}>
                         <TextsmsOutlinedIcon/>

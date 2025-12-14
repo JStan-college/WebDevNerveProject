@@ -7,9 +7,9 @@ const PostSchema = new Schema({
     user_id: { type: String, required: true },
     challengeId: { type: String, required: true },
     score: { type: Number, default: 0 },
-    imageurl: {type: String}
-}, { timestamps: true }
-);
+    imageurl: {type: String},
+    likes: { type: [String], default: [] }
+}, { timestamps: true });
 
 const Post = mongoose.model('Post', PostSchema);
 

@@ -5,6 +5,7 @@ import { DarkModeContext } from '../../context/darkModeContext';
 import { AuthContext } from '../../context/authContext';
 import Comments from '../../components/comments/Comments';
 import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined';
+import FavoriteOutlinedIcon from '@mui/icons-material/FavoriteOutlined';
 import TextsmsOutlinedIcon from '@mui/icons-material/TextsmsOutlined';
 import ShareOutlinedIcon from '@mui/icons-material/ShareOutlined';
 import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
@@ -22,6 +23,8 @@ const PostDetails = () => {
     const [author, setAuthor] = useState(null);
     const [title, setTitle] = useState("");
     const [content, setContent] = useState("");
+    const [liked, setLiked] = useState(false);
+    const [likeCount, setLikeCount] = useState(0);
     const { darkMode } = useContext(DarkModeContext);
     const { user } = useContext(AuthContext);
     const isOwner = user && (user.id?.toString() === post?.user_id?.toString() || user._id?.toString() === post?.user_id?.toString());
@@ -37,6 +40,13 @@ const PostDetails = () => {
                 setPost(data);
                 setTitle(data.title);
                 setContent(data.content);
+                setLikeCount(data.likes ? data.likes.length : 0);
+                
+                // Check if current user has liked this post
+                if (user && data.likes) {
+                    const userId = user._id || user.id;
+                    setLiked(data.likes.includes(userId));
+                }
                 console.log("Post user_id:", data.user_id);
             } catch (err) {
                 setError(err.message || 'Error');
@@ -46,7 +56,7 @@ const PostDetails = () => {
             }
         };
         fetchPostDetails();
-    }, [id]);
+    }, [id, user]);
 
     //get the user info based on the post's user_id for displaying username
     useEffect(() => {
@@ -87,6 +97,32 @@ const PostDetails = () => {
         }
     }
 
+    const handleLike = async () => {
+        if (!user) {
+            navigate('/login');
+            return;
+        }
+
+        try {
+            const token = localStorage.getItem('token');
+            const endpoint = liked ? 'unlike' : 'like';
+            const response = await fetch(`http://localhost:8080/api/posts/${id}/${endpoint}`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (response.ok) {
+                setLiked(!liked);
+                setLikeCount(liked ? likeCount - 1 : likeCount + 1);
+            }
+        } catch (err) {
+            console.error('Error updating like:', err);
+        }
+    };
+
     if (loading) return <div className="postDetails">Loading...</div>;
     if (error) return <div className="postDetails">Error: {error}</div>;
     if (!post) return <div className="postDetails">No post found</div>;
@@ -103,7 +139,7 @@ const PostDetails = () => {
                             {post.imgurl && <img src={post.imgurl} alt="post" style={{maxWidth: '100%'}}/>}
                             <p>{post.content}</p>
                             <div className="actions" style={{marginTop: 12}}>
-                                <button className="action like"><FavoriteBorderOutlinedIcon/> Like</button>
+                                <button className="action like" onClick={handleLike}>{liked ? <FavoriteOutlinedIcon/> : <FavoriteBorderOutlinedIcon/>} {likeCount} Likes</button>
                                 <button className="action comment"><TextsmsOutlinedIcon/> Comment</button>
                                 <button className="action share"><ShareOutlinedIcon/> Share</button>
                                 {isOwner && (

@@ -1,4 +1,4 @@
-import { getAllPosts, createPost, updatePost, deletePost, getPostById, searchPosts } from '../controllers/postsController.js';
+import { getAllPosts, createPost, updatePost, deletePost, getPostById, searchPosts, likePost, unlikePost } from '../controllers/postsController.js';
 
 import { verifyToken } from '../middleware/auth.js';
 
@@ -11,6 +11,8 @@ router.post('/', verifyToken, createPost);
 router.get('/search', searchPosts);
 router.get('/:id', getPostById);
 router.put('/:id', verifyToken, updatePost);
-router.delete('/:id', verifyToken,deletePost);
+router.delete('/:id', verifyToken, deletePost);
+router.post('/:id/like', verifyToken, likePost);
+router.post('/:id/unlike', verifyToken, unlikePost);
 
 export default router;

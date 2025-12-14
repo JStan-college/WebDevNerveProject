@@ -114,3 +114,55 @@ export async function searchPosts(req, res) {
         res.status(500).json({ message: "Server error" });
     }
 }
+
+export async function likePost(req, res) {
+    try {
+        const postId = req.params.id;
+        const userId = req.user && req.user.id;
+        
+        if (!userId) return res.status(401).json({ message: 'Unauthorized' });
+
+        const post = await Post.findById(postId);
+        if (!post) return res.status(404).json({ message: "Post not found" });
+
+        // Check if user already liked this post
+        if (post.likes.includes(userId)) {
+            return res.status(400).json({ message: "Already liked" });
+        }
+
+        // Add user ID to likes array
+        post.likes.push(userId);
+        const updatedPost = await post.save();
+
+        res.status(200).json({ message: "Post liked successfully", post: updatedPost });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: "Internal server error" });
+    }
+}
+
+export async function unlikePost(req, res) {
+    try {
+        const postId = req.params.id;
+        const userId = req.user && req.user.id;
+        
+        if (!userId) return res.status(401).json({ message: 'Unauthorized' });
+
+        const post = await Post.findById(postId);
+        if (!post) return res.status(404).json({ message: "Post not found" });
+
+        // Check if user has liked this post
+        if (!post.likes.includes(userId)) {
+            return res.status(400).json({ message: "Not liked yet" });
+        }
+
+        // Remove user ID from likes array
+        post.likes = post.likes.filter(id => id !== userId);
+        const updatedPost = await post.save();
+
+        res.status(200).json({ message: "Post unliked successfully", post: updatedPost });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: "Internal server error" });
+    }
+}
