@@ -148,38 +148,40 @@ const NavBar = () => {
       <div className="right">
         <PersonOutlinedIcon onClick={handleProfileClick} style={{cursor: 'pointer'}}/>
         {/*<EmailOutlinedIcon/>*/}
-        <div className={`notifications ${todaysChallenge ? 'has-challenge' : ''}`} ref={notificationsRef}>
-          <NotificationsOutlinedIcon
-            onClick={toggleNotifications}
-            style={{ cursor: 'pointer' }}
-          />
-          {showNotifications && (
-            <div className="notifications-dropdown">
-              {loadingChallenge ? (
-                <div className="nd-loading">Loading...</div>
-              ) : challengeError ? (
-                <div className="nd-error">{challengeError}</div>
-              ) : todaysChallenge ? (
-                <div className="nd-content">
-                  <h4>{todaysChallenge.title}</h4>
-                  <p className="genre">{todaysChallenge.genre}</p>
-                  <button onClick={() => { navigate(`/create`); setShowNotifications(false); }} className="nd-view-btn">Complete!</button>
-                </div>
-              ) : (
-                // If today's challenge is not present but the user was assigned one today
-                // and challengeToday is empty, show 'Challenges completed'.
-                (user && user.challengeAssignedAt && !todaysChallenge && isSameDay(new Date(user.challengeAssignedAt), new Date())) ? (
+        {isLoggedIn && (
+          <div className={`notifications ${todaysChallenge ? 'has-challenge' : ''}`} ref={notificationsRef}>
+            <NotificationsOutlinedIcon
+              onClick={toggleNotifications}
+              style={{ cursor: 'pointer' }}
+            />
+            {showNotifications && (
+              <div className="notifications-dropdown">
+                {loadingChallenge ? (
+                  <div className="nd-loading">Loading...</div>
+                ) : challengeError ? (
+                  <div className="nd-error">{challengeError}</div>
+                ) : todaysChallenge ? (
                   <div className="nd-content">
-                    <h4>Challenges completed</h4>
-                    <p className="genre">You completed today's challenge</p>
+                    <h4>{todaysChallenge.title}</h4>
+                    <p className="genre">{todaysChallenge.genre}</p>
+                    <button onClick={() => { navigate(`/create`); setShowNotifications(false); }} className="nd-view-btn">Complete!</button>
                   </div>
                 ) : (
-                  <div className="nd-empty">No challenge assigned</div>
-                )
-              )}
-            </div>
-          )}
-        </div>
+                  // If today's challenge is not present but the user was assigned one today
+                  // and challengeToday is empty, show 'Challenges completed'.
+                  (user && user.challengeAssignedAt && !todaysChallenge && isSameDay(new Date(user.challengeAssignedAt), new Date())) ? (
+                    <div className="nd-content">
+                      <h4>Challenges completed</h4>
+                      <p className="genre">You completed today's challenge</p>
+                    </div>
+                  ) : (
+                    <div className="nd-empty">No challenge assigned</div>
+                  )
+                )}
+              </div>
+            )}
+          </div>
+        )}
         {/*
         <div className="user">
           <img src="https://images.pexels.com/photos/3228727/pexels-photo-3228727.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=500" alt=""/>
