@@ -114,6 +114,15 @@ const NavBar = () => {
     }
   }
 
+  const isSameDay = (d1, d2) => {
+    if (!d1 || !d2) return false;
+    try {
+      return d1.getFullYear() === d2.getFullYear() && d1.getMonth() === d2.getMonth() && d1.getDate() === d2.getDate();
+    } catch (e) {
+      return false;
+    }
+  }
+
   return (
     <div className="navbar">
       <div className="left">
@@ -140,7 +149,10 @@ const NavBar = () => {
         <PersonOutlinedIcon onClick={handleProfileClick} style={{cursor: 'pointer'}}/>
         {/*<EmailOutlinedIcon/>*/}
         <div className="notifications" ref={notificationsRef}>
-          <NotificationsOutlinedIcon onClick={toggleNotifications} style={{ cursor: 'pointer' }} />
+          <NotificationsOutlinedIcon
+            onClick={toggleNotifications}
+            style={{ cursor: 'pointer', color: (user && user.challengeToday) ? '#1976d2' : undefined }}
+          />
           {showNotifications && (
             <div className="notifications-dropdown">
               {loadingChallenge ? (
@@ -154,7 +166,16 @@ const NavBar = () => {
                   <button onClick={() => { navigate(`/create`); setShowNotifications(false); }} className="nd-view-btn">Complete!</button>
                 </div>
               ) : (
-                <div className="nd-empty">No challenge assigned</div>
+                // If today's challenge is not present but the user was assigned one today
+                // and challengeToday is empty, show 'Challenges completed'.
+                (user && user.challengeAssignedAt && !todaysChallenge && isSameDay(new Date(user.challengeAssignedAt), new Date())) ? (
+                  <div className="nd-content">
+                    <h4>Challenges completed</h4>
+                    <p className="genre">You completed today's challenge</p>
+                  </div>
+                ) : (
+                  <div className="nd-empty">No challenge assigned</div>
+                )
               )}
             </div>
           )}
