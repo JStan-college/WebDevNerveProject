@@ -15,6 +15,7 @@ const PostCard = ({post, onPostDeleted}) => {
     const [commentOpen, setCommentOpen] = useState(false);
 
     const [optionsOpen, setOptionsOpen] = useState(false);
+    const [hidden, setHidden] = useState(false);
 
     //needs to be fixed
     const liked = false;
@@ -22,7 +23,7 @@ const PostCard = ({post, onPostDeleted}) => {
     
 
     return (
-        <div className="post">
+        <div className={`post ${hidden ? 'hidden' : ''}`}>
             <div className="container">
                 <div className="user">
                     <div className="userInfo">
@@ -34,7 +35,14 @@ const PostCard = ({post, onPostDeleted}) => {
                     </div>
                     <div className="item" onClick={() => setOptionsOpen(!optionsOpen)}>
                         <MoreHorizIcon/>
-                        {optionsOpen && <PostOptions postId={post._id} onDeleted={onPostDeleted}/>}
+                        {optionsOpen && (
+                            <PostOptions
+                                postId={post._id}
+                                ownerId={post.user_id}
+                                onDeleted={onPostDeleted}
+                                onHide={() => setHidden(h => !h)}
+                            />
+                        )}
                     </div>
                     
                 </div>

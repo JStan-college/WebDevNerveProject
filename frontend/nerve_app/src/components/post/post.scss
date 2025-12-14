@@ -54,6 +54,22 @@
                 }
             }
 
+        &.hidden {
+            opacity: 0.7;
+            .container {
+                .content {
+                    h1 {
+                        font-size: 16px;
+                        color: themed("text-color-muted");
+                    }
+                    p,
+                    img {
+                        display: none;
+                    }
+                }
+            }
+        }
+
             .info{
                 display: flex;
                 align-items: center;
@@ -69,4 +85,21 @@
             }
         }
 }
+}
+
+/* Ensure hide/minimize styles apply even if themify wrapper not present */
+.post.hidden {
+    opacity: 0.7;
+}
+.post.hidden .container .content h1 {
+    font-size: 16px;
+    color: #777;
+}
+.post.hidden .container .content p,
+.post.hidden .container .content img {
+    display: none;
+}
+
+.post.hidden .container .info {
+    display: none;
 }

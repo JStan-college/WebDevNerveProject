@@ -1,12 +1,15 @@
 import "./postOptions.scss";
-import {useState, useEffect} from 'react';
+import { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { AuthContext } from '../../context/authContext';
 
 
-const PostOptions = ({postId, onDeleted}) => {
+const PostOptions = ({ postId, ownerId, onDeleted, onHide }) => {
     const navigate = useNavigate();
+    const { user } = useContext(AuthContext);
 
-    
+    const isOwner = user && (user.id?.toString() === ownerId?.toString() || user._id?.toString() === ownerId?.toString());
+
     const handleDelete = async () => {
         const token = localStorage.getItem("token");
         try {
@@ -25,14 +28,22 @@ const PostOptions = ({postId, onDeleted}) => {
     };
 
     const handleEdit = () => {
-        // navigate to the post details page where editing is allowed
         navigate(`/post/${postId}`);
-    }
+    };
+
+    const handleHide = () => {
+        if (onHide) onHide(postId);
+    };
 
     return (
-        <div className="item">
-            <button onClick={handleDelete} className="delete-button">Delete Post</button>
-            <button onClick={handleEdit} className="edit-button">Edit Post</button>
+        <div className="item post-options">
+            <button onClick={handleHide} className="hide-button">{/* toggles hide/unhide in parent */}Hide Post</button>
+            {isOwner && (
+                <>
+                    <button onClick={handleEdit} className="edit-button">Edit Post</button>
+                    <button onClick={handleDelete} className="delete-button">Delete Post</button>
+                </>
+            )}
         </div>
     );
 };

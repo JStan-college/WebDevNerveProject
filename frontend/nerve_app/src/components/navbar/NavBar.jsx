@@ -12,10 +12,12 @@ import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
 import { Link } from "react-router-dom";
 import { DarkModeContext } from "../../context/darkModeContext";
 import { useContext, useState, useEffect, useRef } from 'react';
+import { AuthContext } from '../../context/authContext';
 
 const NavBar = () => {
 
   const {toggle, darkMode} = useContext(DarkModeContext);
+  const { user, logout } = useContext(AuthContext);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
@@ -25,10 +27,9 @@ const NavBar = () => {
   let navigate = useNavigate();
   
   useEffect(() => {
-    // Check if user is logged in
-    const token = localStorage.getItem('token');
-    setIsLoggedIn(!!token);
-  }, []);
+    // derive logged-in state from AuthContext user
+    setIsLoggedIn(!!user);
+  }, [user]);
 
   // Debounced search function
   const searchableList = async (query) => {
@@ -89,8 +90,9 @@ const NavBar = () => {
           'Authorization': `Bearer ${token}`
         }
       });
+      // use AuthContext logout to update global state
+      if (logout) logout();
       localStorage.removeItem('token');
-      setIsLoggedIn(false);
       navigate('/login');
     } catch (err) {
       console.error('Logout failed:', err);
