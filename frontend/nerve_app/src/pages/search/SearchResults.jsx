@@ -14,7 +14,7 @@ const SearchResults = () => {
 
   // Filter states
   const [filters, setFilters] = useState({
-    searchIn: "all", // all, title, content, username
+    searchIn: "all", // all, title, content, username, challenge
     sortBy: "recent", // recent, oldest, popular
   });
 
@@ -62,6 +62,9 @@ const SearchResults = () => {
           case "username":
             // Would need to add username to post data or fetch it
             return true; // This would be handled by backend ideally
+          case "challenge":
+            // Check if post has a challenge and if it matches
+            return post.challengeId ? true : false;
           default:
             return true;
         }
@@ -124,6 +127,7 @@ const SearchResults = () => {
               <option value="title">Title Only</option>
               <option value="content">Content Only</option>
               <option value="username">Creator Username</option>
+              <option value="challenge">Challenge Title/Genre</option>
             </select>
           </div>
 

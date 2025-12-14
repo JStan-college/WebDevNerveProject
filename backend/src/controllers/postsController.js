@@ -1,5 +1,6 @@
 import Post from '../models/Post.js';
 import User from '../models/User.js';
+import Challenge from '../models/Challenge.js';
 
 export async function getAllPosts(_, res) {
     try {
@@ -121,13 +122,24 @@ export async function searchPosts(req, res) {
 
         const userIds = matchingUsers.map(u => u._id.toString());
 
+        // Search for challenges by title or genre
+        const matchingChallenges = await Challenge.find({
+            $or: [
+                { title: { $regex: q, $options: "i" } },
+                { genre: { $regex: q, $options: "i" } }
+            ]
+        });
+
+        const challengeIds = matchingChallenges.map(c => c._id.toString());
+
         // Use $regex with $options: "i" for case-insensitive pattern matching
-        // Search in title, content, AND by creator username
+        // Search in title, content, by creator username, and by challenge title/genre
         const posts = await Post.find({
             $or: [
                 { title: { $regex: q, $options: "i" } },
                 { content: { $regex: q, $options: "i" } },
-                { user_id: { $in: userIds } }
+                { user_id: { $in: userIds } },
+                { challengeId: { $in: challengeIds } }
             ]
         }).sort({ createdAt: -1 });
 
