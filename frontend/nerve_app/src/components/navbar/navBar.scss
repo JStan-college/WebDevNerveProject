@@ -124,6 +124,10 @@
 
             .notifications {
                 position: relative;
+                &.has-challenge {
+                    /* color the bell using the theme's logo variable */
+                    svg, .MuiSvgIcon-root { color: themed("logo"); }
+                }
 
                 .notifications-dropdown {
                     position: absolute;

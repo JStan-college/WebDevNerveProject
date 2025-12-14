@@ -148,10 +148,10 @@ const NavBar = () => {
       <div className="right">
         <PersonOutlinedIcon onClick={handleProfileClick} style={{cursor: 'pointer'}}/>
         {/*<EmailOutlinedIcon/>*/}
-        <div className="notifications" ref={notificationsRef}>
+        <div className={`notifications ${todaysChallenge ? 'has-challenge' : ''}`} ref={notificationsRef}>
           <NotificationsOutlinedIcon
             onClick={toggleNotifications}
-            style={{ cursor: 'pointer', color: (user && user.challengeToday) ? '#1976d2' : undefined }}
+            style={{ cursor: 'pointer' }}
           />
           {showNotifications && (
             <div className="notifications-dropdown">
