@@ -21,6 +21,7 @@ const PostCard = ({post, onPostDeleted, username, challenge: challengeProp}) => 
     const [hidden, setHidden] = useState(false);
     const [challenge, setChallenge] = useState(challengeProp || null);
     const [loadingChallenge, setLoadingChallenge] = useState(false);
+    const [commentCount, setCommentCount] = useState(0);
 
     
 
@@ -82,6 +83,25 @@ const PostCard = ({post, onPostDeleted, username, challenge: challengeProp}) => 
     }, [post && post.challengeId, challengeProp]);
     const [liked, setLiked] = useState(false);
     const [likeCount, setLikeCount] = useState(post.likes ? post.likes.length : 0);
+
+    useEffect(() => {
+        // Fetch comment count for this post
+        const fetchCommentCount = async () => {
+            try {
+                const response = await fetch(`http://localhost:8080/api/comments?postId=${post._id}`);
+                if (response.ok) {
+                    const comments = await response.json();
+                    setCommentCount(Array.isArray(comments) ? comments.length : 0);
+                }
+            } catch (err) {
+                console.error('Error fetching comment count:', err);
+            }
+        };
+
+        if (post._id) {
+            fetchCommentCount();
+        }
+    }, [post._id]);
 
     useEffect(() => {
         // Check if current user has liked this post
@@ -161,7 +181,7 @@ const PostCard = ({post, onPostDeleted, username, challenge: challengeProp}) => 
                     </div>
                     <div className="item" onClick={() => navigate(`/post/${post._id}`)}>
                         <TextsmsOutlinedIcon/>
-                        12 Comments
+                        {commentCount} {commentCount === 1 ? 'Comment' : 'Comments'}
                     </div>
                     <div className="item">
                         <ShareOutlinedIcon/>
