@@ -5,6 +5,10 @@
     @include themify($themes){
         background-color: themed("bgSoft");
         padding: 20px 70px;
+        /* Ensure the home background fills the viewport even when posts list is short */
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
 
         @include mobile{
             padding: 10px;

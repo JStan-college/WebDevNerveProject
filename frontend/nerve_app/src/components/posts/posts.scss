@@ -2,5 +2,8 @@
     display: flex;
     flex-direction: column;
     gap: 50px;
+    /* allow posts container to grow so parent background fills screen */
+    flex: 1 0 auto;
+    min-height: 200px;
 
 }
