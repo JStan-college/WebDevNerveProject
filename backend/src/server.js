@@ -5,6 +5,7 @@ import cors from "cors";
 import postsRoutes from './routes/postsRoutes.js';
 import usersRoutes from './routes/usersRoutes.js';
 import commentsRoutes from './routes/commentsRoutes.js'
+import challengesRoutes from './routes/challengesRoutes.js'
 
 import dotenv from 'dotenv';
 dotenv.config();
@@ -21,6 +22,7 @@ app.use(express.json());
 app.use('/api/posts', postsRoutes);
 app.use('/api/users', usersRoutes);
 app.use('/api/comments', commentsRoutes)
+app.use('/api/challenges', challengesRoutes)
 
 
 mongoose.connect(process.env.MONGO_URI)

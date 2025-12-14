@@ -9,7 +9,8 @@ router.get('/', getAllUsers);
 router.post('/', createUser);
 router.get('/me', verifyToken, getCurrentUser);
 router.get('/:id', getUserById);
-router.delete('/:id', deleteUser);
+router.put('/:id', verifyToken, updateUser);
+router.delete('/:id', verifyToken, deleteUser);
 router.post('/login', loginUser);
 router.post('/logout', verifyToken, logoutUser);
 

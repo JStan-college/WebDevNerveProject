@@ -5,9 +5,10 @@ import { Schema } from "mongoose";
 const UserSchema = new Schema({
     username: { type: String, required: true },
     email: { type: String, required: true },
-    password: { type: String, required: true, minlenghth: 6 },
+    password: { type: String, required: true, minlength: 6 },
     challengesCompleted: { type: Number, default: 0 },
     challengesGiven: {type: Number, default: 0},
+    challengeToday: {type: String, default: ""},
     reputation: {type: Number, default: 0},
     imageurl: {type: String}
 }, { timestamps: true }
