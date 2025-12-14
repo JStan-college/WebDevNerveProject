@@ -150,7 +150,7 @@ const PostCard = ({post, onPostDeleted, username, challenge: challengeProp}) => 
                         </div>
                     </div>
                     {challenge && (
-                        <div className="challenge-badge" onClick={() => navigate(`/challenge/${challenge._id}`)}>
+                        <div className="challenge-badge" onClick={() => navigate(`/search?q=${encodeURIComponent(challenge.title)}&filter=challenge`)}>
                             <div className="ch-title">{challenge.title}</div>
                             <div className="ch-genre">{challenge.genre}</div>
                         </div>
@@ -183,10 +183,10 @@ const PostCard = ({post, onPostDeleted, username, challenge: challengeProp}) => 
                         <TextsmsOutlinedIcon/>
                         {commentCount} {commentCount === 1 ? 'Comment' : 'Comments'}
                     </div>
-                    <div className="item">
+                    {/*<div className="item">
                         <ShareOutlinedIcon/>
                         Share
-                    </div>
+                    </div>*/}
                 </div>
                 {commentOpen && <Comments/>}
             </div>

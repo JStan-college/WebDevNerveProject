@@ -25,6 +25,8 @@ const PostDetails = () => {
     const [content, setContent] = useState("");
     const [liked, setLiked] = useState(false);
     const [likeCount, setLikeCount] = useState(0);
+    const [challenge, setChallenge] = useState(null);
+    const [loadingChallenge, setLoadingChallenge] = useState(false);
     const { darkMode } = useContext(DarkModeContext);
     const { user } = useContext(AuthContext);
     const isOwner = user && (user.id?.toString() === post?.user_id?.toString() || user._id?.toString() === post?.user_id?.toString());
@@ -76,6 +78,57 @@ const PostDetails = () => {
         fetchUser();
         console.log("Fetched user for post:", post.user_id);
     }, [post]);
+
+    useEffect(() => {
+        if (!post || !post.challengeId) {
+            setChallenge(null);
+            return;
+        }
+
+        // Normalize challengeId which may sometimes be an object
+        let cid = post.challengeId;
+        if (typeof cid === 'object' && cid !== null) {
+            cid = cid._id || cid.id || cid.$oid || cid.toString();
+        }
+        if (!cid || typeof cid !== 'string') {
+            console.debug('PostDetails: invalid challengeId, skipping fetch', { challengeId: post.challengeId });
+            setChallenge(null);
+            return;
+        }
+
+        const hex24 = /^[0-9a-fA-F]{24}$/;
+        if (!hex24.test(cid)) {
+            setChallenge(null);
+            return;
+        }
+
+        let mounted = true;
+        setLoadingChallenge(true);
+        (async () => {
+            try {
+                const res = await fetch(`http://localhost:8080/api/challenges/${encodeURIComponent(cid)}`);
+                if (!res.ok) {
+                    if (mounted) setChallenge(null);
+                } else {
+                    const text = await res.text();
+                    try {
+                        const data = text ? JSON.parse(text) : null;
+                        if (mounted) setChallenge(data);
+                    } catch (parseErr) {
+                        console.error('Failed to parse challenge JSON for post details', parseErr);
+                        if (mounted) setChallenge(null);
+                    }
+                }
+            } catch (err) {
+                console.error('Failed to load challenge for post details', err);
+                if (mounted) setChallenge(null);
+            } finally {
+                if (mounted) setLoadingChallenge(false);
+            }
+        })();
+
+        return () => { mounted = false; };
+    }, [post && post.challengeId]);
 
     
 
@@ -135,7 +188,14 @@ const PostDetails = () => {
                     {!isEditing ? (
                         <>
                             <h1>{post.title}</h1>
-                            <div className="meta">By {author?.username || post.user_id || 'Unknown'} • <span className="date">{timeAgoOrDate(post.createdAt)}</span></div>
+                            <div className="meta">By <span className="username" onClick={() => navigate(`/profile/${post.user_id}`)} style={{cursor: 'pointer'}}>{author?.username || post.user_id || 'Unknown'}</span> • <span className="date">{timeAgoOrDate(post.createdAt)}</span>
+                                {challenge && (
+                                    <div className="challenge-badge" style={{display: 'inline-block', verticalAlign: 'middle', marginLeft: 8}} onClick={() => navigate(`/search?q=${encodeURIComponent(challenge.title)}&filter=challenge`)}>
+                                        <div className="ch-title">{challenge.title}</div>
+                                        <div className="ch-genre">{challenge.genre}</div>
+                                    </div>
+                                )}
+                            </div>
                             {post.imgurl && <img src={post.imgurl} alt="post" style={{maxWidth: '100%'}}/>}
                             <p>{post.content}</p>
                             <div className="actions" style={{marginTop: 12}}>

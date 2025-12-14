@@ -178,7 +178,7 @@ const Comments = ({ postId }) => {
                     <div className="comment" key={comment._id}>
                         <div className="comment-content">
                             <div className="info">
-                                <span className="username">{userMap[comment.user_id] || "Anonymous"}</span>
+                                <span className="username" onClick={() => navigate(`/profile/${comment.user_id}`)} style={{cursor: 'pointer'}}>{userMap[comment.user_id] || "Anonymous"}</span>
                                 {editingId === comment._id ? (
                                     <div className="edit-form">
                                         <textarea 

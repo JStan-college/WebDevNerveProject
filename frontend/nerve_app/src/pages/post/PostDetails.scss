@@ -53,6 +53,23 @@
         margin-bottom: 12px;
       }
 
+      /* Match challenge badge styling from post.scss so badge looks consistent */
+      .challenge-badge {
+        background-color: themed("bgSoft");
+        border: 1px solid themed("border");
+        padding: 6px 8px;
+        border-radius: 6px;
+        cursor: pointer;
+        min-width: 110px;
+        text-align: left;
+        display: inline-flex;
+        flex-direction: column;
+        justify-content: center;
+
+        .ch-title { font-weight: 600; color: themed("text-color"); font-size: 13px; }
+        .ch-genre { font-size: 11px; color: themed("textColorSoft"); }
+      }
+
       .content {
         img {
           width: 100%;
