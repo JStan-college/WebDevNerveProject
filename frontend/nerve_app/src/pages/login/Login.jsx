@@ -31,9 +31,10 @@ const Login = () => {
 
     if (response.ok) {
       localStorage.setItem("token", result.token);
-      // set user from response if available, otherwise reload from server
+      // set user from response if available
       if (result.user) setUser(result.user);
-      else reload();
+      // always reload to ensure todaysChallenge is fetched and auth state is consistent
+      await reload();
       console.log("Logged In!");
       navigate('/', { replace: true });
     } else {

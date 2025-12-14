@@ -24,65 +24,28 @@
     .container{
         padding: 20px;
 
-        .item{
-
-            box-shadow: 0px 3px 6px 1px rgba(0,0,0,0.29);
-            -webkit-box-shadow: 0px 3px 6px 1px rgba(0,0,0,0.29);
-            -moz-box-shadow: 0px 3px 6px 1px rgba(0,0,0,0.29);
-            padding: 20px;
-            margin-bottom: 20px;
+        .challenge-card, .countdown-card {
+            box-shadow: 0px 3px 6px 1px rgba(0,0,0,0.12);
+            -webkit-box-shadow: 0px 3px 6px 1px rgba(0,0,0,0.12);
+            -moz-box-shadow: 0px 3px 6px 1px rgba(0,0,0,0.12);
+            padding: 18px;
+            margin-bottom: 18px;
             background-color: themed("background-color");
+            border-radius: 12px;
+        }
 
-            span{
-                color: grey;
-            }
+        .challenge-card {
+            .ch-header { color: themed("textColorSoft"); font-size: 12px; margin-bottom: 8px; }
+            .ch-title { font-size: 18px; font-weight: 700; color: themed("text-color"); margin-bottom: 6px; }
+            .ch-genre { font-size: 13px; color: themed("textColorSoft"); margin-bottom: 12px; }
+            .ch-action { padding: 8px 12px; border-radius: 6px; border: none; background-color: themed("logo"); color: #fff; cursor: pointer; }
+            .no-ch { color: themed("textColorSoft"); }
+        }
 
-            .user{
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                margin: 20px 0;
-                .userinfo{
-                    display: flex;
-                    align-items: center;
-
-                    img{
-                        width: 40px;
-                        height: 40px;
-                        border-radius: 50%;
-                        object-fit: cover;
-                    }
-
-                    p{
-                        color: themed("textColorSoft");
-                    }
-
-                    span{
-                        font-weight: 500;
-                        color: themed("text-color");
-                    }
-                }
-                .buttons{
-                    display: flex;
-                    align-items: center;
-                    gap: 10px;
-
-                    button{
-                        border: none;
-                        padding: 5px;
-                        color: white;
-                        cursor: pointer;
-
-                        &:first-child{
-                            background-color: #1872f2;
-                        }
-                        &:last-child{
-                            background-color: red;
-                        }
-                    }
-
-                }
-            }
+        .countdown-card {
+            text-align: center;
+            .countdown-label { color: themed("textColorSoft"); margin-bottom: 8px; }
+            .countdown-value { font-size: 34px; font-weight: 800; color: themed("logo"); }
         }
     }
 }
