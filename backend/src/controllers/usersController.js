@@ -169,8 +169,15 @@ export async function getTodaysChallenge(req, res) {
 
     let challenge = null;
 
-    if (user.challengeToday && assignedAt && isSameDay(new Date(assignedAt), now)) {
-      challenge = await Challenge.findById(user.challengeToday);
+    // If a challenge was already assigned today (regardless of whether it's completed),
+    // do not assign a new one. Return the existing challenge if present, otherwise
+    // return 204 (no content) so clients know there's no active challenge for today.
+    if (assignedAt && isSameDay(new Date(assignedAt), now)) {
+      if (user.challengeToday) {
+        challenge = await Challenge.findById(user.challengeToday);
+      } else {
+        return res.status(204).json({ message: 'No challenge available' });
+      }
     } else {
       // assign a new challenge for today if available
       const count = await Challenge.countDocuments();

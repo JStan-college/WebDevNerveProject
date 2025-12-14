@@ -11,7 +11,7 @@ import {useState, useEffect, useContext} from 'react';
 import PostOptions from "../postoptions/PostOptions";
 import { AuthContext } from "../../context/authContext";
 
-const PostCard = ({post, onPostDeleted, username}) => {
+const PostCard = ({post, onPostDeleted, username, challenge: challengeProp}) => {
 
     const [commentOpen, setCommentOpen] = useState(false);
     const navigate = useNavigate();
@@ -19,6 +19,67 @@ const PostCard = ({post, onPostDeleted, username}) => {
 
     const [optionsOpen, setOptionsOpen] = useState(false);
     const [hidden, setHidden] = useState(false);
+    const [challenge, setChallenge] = useState(challengeProp || null);
+    const [loadingChallenge, setLoadingChallenge] = useState(false);
+
+    
+
+    // username is passed from parent (Posts) via batch fetch to avoid per-post requests
+
+    useEffect(() => {
+        // If parent supplied a challenge object, use it and skip fetching.
+        if (challengeProp) {
+            setChallenge(challengeProp);
+            return;
+        }
+        let mounted = true;
+        async function loadChallenge() {
+            if (!post || !post.challengeId) return;
+            // Normalize challengeId: sometimes it may come as an object
+            let cid = post.challengeId;
+            if (typeof cid === 'object' && cid !== null) {
+                // try common fields
+                cid = cid._id || cid.id || cid.$oid || cid.toString();
+            }
+            if (!cid || typeof cid !== 'string') {
+                // Avoid flooding console with identical messages
+                console.debug('Post has invalid challengeId, skipping challenge fetch', { challengeId: post.challengeId, postId: post._id });
+                return;
+            }
+
+            // only accept Mongo-like hex ids (24 hex chars) to avoid malformed URL issues
+            const hex24 = /^[0-9a-fA-F]{24}$/;
+            if (!hex24.test(cid)) {
+                console.debug('challengeId does not match expected pattern, skipping fetch', { cid, postId: post._id });
+                return;
+            }
+
+            setLoadingChallenge(true);
+            try {
+                const res = await fetch(`/api/challenges/${encodeURIComponent(cid)}`);
+                if (!res.ok) {
+                    if (mounted) setChallenge(null);
+                } else {
+                    // guard JSON parsing errors
+                    const text = await res.text();
+                    try {
+                        const data = text ? JSON.parse(text) : null;
+                        if (mounted) setChallenge(data);
+                    } catch (parseErr) {
+                        console.error('Failed to parse challenge JSON for post', post._id, parseErr);
+                        if (mounted) setChallenge(null);
+                    }
+                }
+            } catch (err) {
+                console.error('Failed to load challenge for post', err);
+                if (mounted) setChallenge(null);
+            } finally {
+                if (mounted) setLoadingChallenge(false);
+            }
+        }
+        loadChallenge();
+        return () => { mounted = false; };
+    }, [post && post.challengeId, challengeProp]);
     const [liked, setLiked] = useState(false);
     const [likeCount, setLikeCount] = useState(post.likes ? post.likes.length : 0);
 
@@ -68,6 +129,12 @@ const PostCard = ({post, onPostDeleted, username}) => {
                             <span className="date">{timeAgoOrDate(post.createdAt)}</span>
                         </div>
                     </div>
+                    {challenge && (
+                        <div className="challenge-badge" onClick={() => navigate(`/challenge/${challenge._id}`)}>
+                            <div className="ch-title">{challenge.title}</div>
+                            <div className="ch-genre">{challenge.genre}</div>
+                        </div>
+                    )}
                     <div className="item" onClick={() => setOptionsOpen(!optionsOpen)}>
                         <MoreHorizIcon/>
                         {optionsOpen && (
@@ -79,7 +146,6 @@ const PostCard = ({post, onPostDeleted, username}) => {
                             />
                         )}
                     </div>
-                    
                 </div>
                 <div className="content">
                     <Link to={`/post/${post._id}`} style={{textDecoration:"none", color:"inherit"}}>
@@ -104,7 +170,6 @@ const PostCard = ({post, onPostDeleted, username}) => {
                 </div>
                 {commentOpen && <Comments/>}
             </div>
-            
         </div>
     )
 }

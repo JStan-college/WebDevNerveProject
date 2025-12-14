@@ -10,7 +10,7 @@ const Create = () => {
     const [title, setTitle] = useState("");
     const [content, setContent] = useState("");
     
-    const { user } = useContext(AuthContext);
+    const { user, todaysChallenge, loadingChallenge, reload } = useContext(AuthContext);
     const { loading } = useContext(AuthContext);
     const navigate = useNavigate();
 
@@ -32,9 +32,10 @@ const Create = () => {
         }
 
         const token = localStorage.getItem("token");
-        const tempChallengeid = "125abc";
+        // Use today's challenge from AuthContext when available
+        const challengeId = (todaysChallenge && todaysChallenge._id) ? todaysChallenge._id : undefined;
         // Do NOT send userId from client - server derives author from token
-        const newPost = { title, content, challengeId: tempChallengeid };
+        const newPost = { title, content, ...(challengeId ? { challengeId } : {}) };
 
         try {
             const response = await fetch("http://localhost:8080/api/posts", {
@@ -44,10 +45,19 @@ const Create = () => {
             });
 
             const result = await response.json();
+            if (!response.ok) {
+                console.error('Create failed', result);
+                return;
+            }
+
             console.log("Post created", result);
 
             setTitle("");
             setContent("");
+            // If server returned updated user, update via reload (reload will fetch fresh challenge)
+            if (reload) await reload();
+            // navigate back to home after successful creation
+            navigate('/');
         } catch (error) {
             console.error("Error creating post:", error);
         }
@@ -65,6 +75,17 @@ const Create = () => {
                                     <CloseOutlinedIcon />
                                 </button>
                                 <h1>Create A New Post</h1>
+                                {loadingChallenge ? (
+                                    <div className="challenge-box loading">Loading today's challenge...</div>
+                                ) : todaysChallenge ? (
+                                    <div className="challenge-box">
+                                        <strong>Today's Challenge:</strong>
+                                        <div className="ch-title">{todaysChallenge.title}</div>
+                                        <div className="ch-genre">{todaysChallenge.genre}</div>
+                                    </div>
+                                ) : (
+                                    <div className="challenge-box empty">No challenge assigned</div>
+                                )}
                 <form onSubmit={handleSubmit}>
                     <input type="text" 
                     placeholder="Title" 

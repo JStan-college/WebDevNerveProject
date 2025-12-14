@@ -39,6 +39,19 @@
                 justify-content: center;
                 z-index: 40;
             }
+            .challenge-box {
+                border: 1px dashed themed("border");
+                padding: 10px;
+                border-radius: 6px;
+                background-color: themed("bgSoft");
+                color: themed("text-color");
+                margin-bottom: 6px;
+
+                &.loading, &.empty { color: themed("textColorSoft"); }
+
+                .ch-title { font-weight: 600; margin-top: 6px; }
+                .ch-genre { font-size: 13px; color: themed("textColorSoft"); }
+            }
 
             form {
                 display: flex;

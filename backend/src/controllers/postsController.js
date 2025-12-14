@@ -17,11 +17,30 @@ export async function createPost(req, res) {
         // Use server-verified user id from verifyToken middleware
         const userId = req.user && req.user.id;
         if (!userId) return res.status(401).json({ message: 'Unauthorized' });
+        // If user has a challengeToday on their account, prefer that challenge
+        const user = await User.findById(userId);
+        let finalChallengeId = challengeId;
+        if (user && user.challengeToday) {
+            finalChallengeId = user.challengeToday;
+        }
 
-        const newPost = new Post({ title, content, user_id: userId, challengeId });
+        const newPost = new Post({ title, content, user_id: userId, challengeId: finalChallengeId });
 
         const savedPost = await newPost.save();
-        res.status(201).json({ message: "Post created successfully", post: savedPost });
+
+        // Clear the user's today's challenge after successfully creating a post
+        let clearedUser = null;
+        try {
+            if (user) {
+                user.challengeToday = "";
+                const updatedUser = await user.save();
+                clearedUser = await User.findById(updatedUser._id).select('-password');
+            }
+        } catch (uErr) {
+            console.error('Failed to clear user challengeToday:', uErr);
+        }
+
+        res.status(201).json({ message: "Post created successfully", post: savedPost, user: clearedUser });
     } catch (err) {
         console.error(err);
         res.status(400).json({ message: "Bad request" });

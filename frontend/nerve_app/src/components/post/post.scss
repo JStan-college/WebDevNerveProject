@@ -13,15 +13,37 @@
 
         .container{
             padding: 20px;
+            position: relative;
+
+            .challenge-badge {
+                /* Inline badge placed beside user info */
+                position: static;
+                background-color: themed("bgSoft");
+                border: 1px solid themed("border");
+                padding: 6px 8px;
+                border-radius: 6px;
+                cursor: pointer;
+                min-width: 110px;
+                text-align: left;
+                margin-left: 12px;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+
+                .ch-title { font-weight: 600; color: themed("text-color"); font-size: 13px; }
+                .ch-genre { font-size: 11px; color: themed("textColorSoft"); }
+            }
 
             .user{
                 display: flex;
                 align-items: center;
-                justify-content: space-between;
+                justify-content: flex-start;
 
                 .userInfo{
                     display: flex;
                     gap: 20px;
+                    align-items: center;
+                    /* keep userInfo content grouped on the left */
                     img{
                         width: 40px;
                         height: 40px;
@@ -46,6 +68,7 @@
                             }
                     }
                 }
+                .item { margin-left: auto; }
             }
 
             .content {
