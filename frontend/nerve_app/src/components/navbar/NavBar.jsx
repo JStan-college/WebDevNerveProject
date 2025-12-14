@@ -59,6 +59,23 @@ const NavBar = () => {
     navigate(path);
   }
 
+  const handleProfileClick = () => {
+    if (!isLoggedIn || !user) {
+      navigate('/login');
+      return;
+    }
+    const userId = user._id || user.id;
+    if (!userId) {
+      // If user ID is still not available, reload the user data first
+      reload().then(() => {
+        const id = user._id || user.id;
+        if (id) navigate(`/profile/${id}`);
+      });
+      return;
+    }
+    navigate(`/profile/${userId}`);
+  }
+
   const handleLogout = async () => {
     try {
       const token = localStorage.getItem('token');
@@ -120,7 +137,7 @@ const NavBar = () => {
 
       </div>
       <div className="right">
-        <PersonOutlinedIcon onClick={() => user && navigate(`/profile/${user._id}`)} style={{cursor: 'pointer'}}/>
+        <PersonOutlinedIcon onClick={handleProfileClick} style={{cursor: 'pointer'}}/>
         {/*<EmailOutlinedIcon/>*/}
         <div className="notifications" ref={notificationsRef}>
           <NotificationsOutlinedIcon onClick={toggleNotifications} style={{ cursor: 'pointer' }} />

@@ -42,15 +42,19 @@ const Profile = () => {
         }
       } catch (err) {
         console.error("Error fetching user posts:", err);
-      } finally {
+      }
+    };
+
+    const loadProfileData = async () => {
+      setLoading(true);
+      if (userId) {
+        await fetchUserProfile();
+        await fetchUserPosts();
         setLoading(false);
       }
     };
 
-    if (userId) {
-      fetchUserProfile();
-      fetchUserPosts();
-    }
+    loadProfileData();
   }, [userId]);
   return (
     <div className="profile">
@@ -89,11 +93,11 @@ const Profile = () => {
                 <span>{userProfile?.website || "Website not specified"}</span>
               </div>
             </div>
-            <button>follow</button>
+            {/*<button>follow</button>*/}
           </div>
           <div className="right">
-            <EmailOutlinedIcon/>
-            <MoreVertIcon/>
+            {/*<EmailOutlinedIcon/>
+            <MoreVertIcon/>*/}
           </div>
         </div>
         {loading ? (
